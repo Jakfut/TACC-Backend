@@ -117,7 +117,6 @@ class CalendarConnectionService (
         // Save new inactive CalendarConnection
         calendarConnectionRepository.save(CalendarConnection(
             id = calendarConnectionId,
-            userInformation = null,
             active = false,
             config = validatedConfig
         ))
@@ -242,4 +241,6 @@ class CalendarConnectionService (
     }
 
     // TODO: check connection on every update or add extra checkConnection function?
+    // TODO: update the service, which calls e.g. TESSIE, when config is changed / a new one is activated/deactivated
+    // TODO: create in-between layer to implement encryption/decryption of the config (one every set/get) -> use "@EntityListeners()"
 }

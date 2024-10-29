@@ -34,7 +34,7 @@ data class CalendarConnection(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_information_id", insertable=false, updatable=false)
     @JsonIgnore
-    val userInformation: UserInformation?,
+    val userInformation: UserInformation? = null,
 
     /**
      * Indicates whether this calendar connection is currently active.

@@ -31,7 +31,7 @@ data class TeslaConnection(
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_information_id", insertable=false, updatable=false)
-    var userInformation: UserInformation?,
+    var userInformation: UserInformation? = null,
 
     /**
      * Indicates whether this TeslaConnection connection is currently active.
