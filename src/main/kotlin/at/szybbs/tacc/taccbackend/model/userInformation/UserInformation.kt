@@ -24,8 +24,6 @@ data class UserInformation(
     @Column(name = "email", nullable = false)
     var email: String,
 
-    // TODO: Adapt default values
-
     /**
      * Value in minutes that serves as a fallback travel time if no destination is provided for an appointment.
      */

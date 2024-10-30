@@ -34,11 +34,11 @@ class CalendarConnectionController (
     }
 
     @GetMapping("/{calendarConnectionType}")
-    fun getCalendarConnectionByType(
+    fun getCalendarConnection(
         @PathVariable userInformationId: UUID,
         @PathVariable calendarConnectionType: CalendarType
     ) : ResponseEntity<CalendarConnectionResponseDto> {
-        val calendarConnectionResponseDto = calendarConnectionService.getCalendarConnectionByType(
+        val calendarConnectionResponseDto = calendarConnectionService.getCalendarConnection(
             CalendarConnectionId(
                 type = calendarConnectionType,
                 userInformationId = userInformationId
@@ -59,12 +59,12 @@ class CalendarConnectionController (
     }
 
     @PostMapping("/{calendarConnectionType}")
-    fun createCalendarConnectionByType(
+    fun createCalendarConnection(
         @PathVariable userInformationId: UUID,
         @PathVariable calendarConnectionType: CalendarType,
         @RequestBody calendarConnectionCreationDto: CalendarConnectionCreationDto
     ) : ResponseEntity<CalendarConnectionResponseDto> {
-        val calendarConnectionResponseDto = calendarConnectionService.createCalendarConnection(
+        val calendarConnectionResponseDto = calendarConnectionService.createCalendarConnectionFromUserInput(
             calendarConnectionId = CalendarConnectionId(
                 type = calendarConnectionType,
                 userInformationId = userInformationId
@@ -111,13 +111,12 @@ class CalendarConnectionController (
         @PathVariable calendarConnectionType: CalendarType,
         @RequestBody config: JsonNode
     ) : ResponseEntity<CalendarConnectionResponseDto> {
-        val calendarConnectionResponseDto = calendarConnectionService.updateCalendarConnectionConfig(
+        val calendarConnectionResponseDto = calendarConnectionService.updateCalendarConnectionConfigFromUserInput(
             calendarConnectionId = CalendarConnectionId(
                 type = calendarConnectionType,
                 userInformationId = userInformationId
             ),
-            config = config,
-            fromUserInput = true
+            newConfig = config
         ).toResponseDto()
 
         return ResponseEntity.ok(calendarConnectionResponseDto)

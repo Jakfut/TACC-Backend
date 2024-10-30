@@ -5,7 +5,7 @@ import at.szybbs.tacc.taccbackend.exception.calendarConnection.ActiveCalendarCon
 import at.szybbs.tacc.taccbackend.exception.calendarConnection.CalendarConnectionAlreadyExistsException
 import at.szybbs.tacc.taccbackend.exception.calendarConnection.CalendarConnectionNotFoundException
 import at.szybbs.tacc.taccbackend.exception.calendarConnection.UnsupportedCalendarTypeException
-import at.szybbs.tacc.taccbackend.exception.calendarConnection.InvalidCalendarConfigFormatException
+import at.szybbs.tacc.taccbackend.exception.calendarConnection.InvalidCalendarConnectionConfigFormatException
 import at.szybbs.tacc.taccbackend.exception.calendarConnection.IllegalCalendarConnectionConfigValueException
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationNotFoundException
 import at.szybbs.tacc.taccbackend.model.calendarConnection.CalendarConnection
@@ -13,6 +13,7 @@ import at.szybbs.tacc.taccbackend.model.calendarConnection.CalendarConnectionId
 import at.szybbs.tacc.taccbackend.repository.calendarConnection.CalendarConnectionRepository
 import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
 import at.szybbs.tacc.taccbackend.validation.calendarConnection.CalendarConnectionUserInputConfigValidatorMapper
+import at.szybbs.tacc.taccbackend.validation.calendarConnection.CalendarConnectionUserInputConfig
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import jakarta.transaction.Transactional
@@ -57,7 +58,7 @@ class CalendarConnectionService (
      * @return The CalendarConnection with the specified ID
      * @throws CalendarConnectionNotFoundException if no CalendarConnection with the specified ID is found
      */
-    fun getCalendarConnectionByType(calendarConnectionId: CalendarConnectionId): CalendarConnection {
+    fun getCalendarConnection(calendarConnectionId: CalendarConnectionId): CalendarConnection {
         return calendarConnectionRepository.findById(calendarConnectionId)
             .orElseThrow { CalendarConnectionNotFoundException(calendarConnectionId) }
     }
@@ -89,18 +90,18 @@ class CalendarConnectionService (
     /**
      * Creates a new CalendarConnection with the data provided in a CalendarConnectionCreationDto.
      * Validates and saves the new connection, optionally setting it to active if specified.
-     * The config of the connection will be handled as if it was from a user input, so [userInputConfigValidator].validate(...) is called.
+     * The config of the connection will be handled as if it was from a user input, so only fields specified in [CalendarConnectionUserInputConfig] for each type are allowed.
      * @param calendarConnectionId Unique identifier for the new CalendarConnection
      * @param calendarConnectionCreationDto DTO containing details of the new connection
      * @return The newly created CalendarConnection, activated if specified
      * @throws CalendarConnectionAlreadyExistsException if a connection with the ID already exists
      * @throws UserInformationNotFoundException if no information for the user exists
-     * @throws UnsupportedCalendarTypeException if the calendar type is not supported
-     * @throws InvalidCalendarConfigFormatException if the configuration format is invalid
+     * @throws UnsupportedCalendarTypeException if the CalendarType is not supported
+     * @throws InvalidCalendarConnectionConfigFormatException if the configuration format is invalid
      * @throws IllegalCalendarConnectionConfigValueException if configuration values are illegal
      */
     @Transactional
-    fun createCalendarConnection(
+    fun createCalendarConnectionFromUserInput(
         calendarConnectionId: CalendarConnectionId,
         calendarConnectionCreationDto: CalendarConnectionCreationDto
     ): CalendarConnection {
@@ -108,7 +109,7 @@ class CalendarConnectionService (
 
         if (!userInformationService.userInformationExists(calendarConnectionId.userInformationId)) throw UserInformationNotFoundException(calendarConnectionId.userInformationId)
 
-        // Validate configuration based on calendar type and config input
+        // Validate configuration based on CalendarType and config input
         val validatedConfig = userInputConfigValidator.validateAndMap(
             calendarType = calendarConnectionId.type,
             config = calendarConnectionCreationDto.config,
@@ -123,7 +124,7 @@ class CalendarConnectionService (
 
         // If not intended to be active, return as saved; otherwise, activate
         if (!calendarConnectionCreationDto.active) {
-            return getCalendarConnectionByType(calendarConnectionId)
+            return getCalendarConnection(calendarConnectionId)
         }
 
         return setCalendarConnectionToActive(calendarConnectionId)
@@ -176,22 +177,20 @@ class CalendarConnectionService (
 
     /**
      * Updates the configuration of an existing CalendarConnection with a new configuration.
-     * If the input originates from the user, validation is performed through [userInputConfigValidator].validate(...).
-     * Not existing fields in the configuration are created and existing one's are overwritten.
+     * Not existing fields in the configuration are created and existing ones are overwritten.
+     * Only fields specified in [CalendarConnectionUserInputConfig] for each type are allowed.
      * @param calendarConnectionId Unique identifier for the CalendarConnection to update
-     * @param config New configuration as a JsonNode
-     * @param fromUserInput Flag indicating if the update originated from user input
+     * @param newConfig New configuration as a JsonNode
      * @return The updated CalendarConnection
      * @throws CalendarConnectionNotFoundException if no connection with the specified ID is found
-     * @throws UnsupportedCalendarTypeException if the calendar type is unsupported
-     * @throws InvalidCalendarConfigFormatException if the configuration format is invalid
+     * @throws UnsupportedCalendarTypeException if the CalendarType is unsupported
+     * @throws InvalidCalendarConnectionConfigFormatException if the configuration format is invalid
      * @throws IllegalCalendarConnectionConfigValueException if configuration values are illegal
      */
     @Transactional
-    fun updateCalendarConnectionConfig(
+    fun updateCalendarConnectionConfigFromUserInput(
         calendarConnectionId: CalendarConnectionId,
-        config: JsonNode,
-        fromUserInput: Boolean
+        newConfig: JsonNode,
     ): CalendarConnection {
         val calendarConnectionOpt = calendarConnectionRepository.findById(calendarConnectionId)
 
@@ -199,21 +198,20 @@ class CalendarConnectionService (
 
         val calendarConnection = calendarConnectionOpt.get()
 
-        if (fromUserInput) {
-            // Cast current config to ObjectNode to allow updating specific fields
-            val existingConfig = calendarConnection.config as ObjectNode
+        // Validate and map the new config according to the CalendarType requirements
+        val validatedConfig = userInputConfigValidator.validateAndMap(
+            calendarType = calendarConnectionId.type,
+            config = newConfig
+        )
 
-            // Validate and map the input config according to the calendar type requirements
-            val validatedConfig = userInputConfigValidator.validateAndMap(calendarConnectionId.type, config)
+        // Cast current config to ObjectNode to allow updating specific fields
+        val existingConfig = calendarConnection.config as ObjectNode
 
-            // Merge validated fields into existingConfig
-            existingConfig.setAll<JsonNode>(validatedConfig as ObjectNode)
+        // Merge validated fields into existingConfig
+        existingConfig.setAll<JsonNode>(validatedConfig as ObjectNode)
 
-            // Save the updated configuration back to the CalendarConnection object
-            calendarConnection.config = existingConfig
-        } else {
-            throw RuntimeException("Not implemented yet")
-        }
+        // Save the updated configuration back to the CalendarConnection object
+        calendarConnection.config = existingConfig
 
         return calendarConnection
     }
@@ -241,6 +239,4 @@ class CalendarConnectionService (
     }
 
     // TODO: check connection on every update or add extra checkConnection function?
-    // TODO: update the service, which calls e.g. TESSIE, when config is changed / a new one is activated/deactivated
-    // TODO: create in-between layer to implement encryption/decryption of the config (one every set/get) -> use "@EntityListeners()"
 }

@@ -1,5 +1,5 @@
 package at.szybbs.tacc.taccbackend.exception.calendarConnection
 
-class InvalidCalendarConfigFormatException(configFormatClassName: String) :
+class InvalidCalendarConnectionConfigFormatException(configFormatClassName: String) :
     RuntimeException("Invalid configuration format for: $configFormatClassName.") {
 }

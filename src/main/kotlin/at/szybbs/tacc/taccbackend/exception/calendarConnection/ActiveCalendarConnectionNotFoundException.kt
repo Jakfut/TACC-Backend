@@ -8,5 +8,5 @@ import java.util.UUID
  * @param userInformationId The UUID of the user whose calendar connection is missing.
  */
 class ActiveCalendarConnectionNotFoundException(userInformationId: UUID) :
-    RuntimeException("No active calendar connection found for userInformation id $userInformationId.") {
+    RuntimeException("No active CalendarConnection found for userInformation id $userInformationId.") {
 }
