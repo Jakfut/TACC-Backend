@@ -1,23 +1,35 @@
 package at.szybbs.tacc.taccbackend.client.teslaConnection
 
+import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaConnectionType
 import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
+import org.springframework.context.annotation.Scope
+import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.toEntity
 
-class TessieConnectionClient(private val vin: String, private val token: String) {
+@Component
+@Scope("prototype")
+class TessieConnectionClient: TeslaConnectionClient {
+    override lateinit var vin: String
+    override lateinit var token: String
+
     private val restClient = RestClient.builder()
         .baseUrl("https://api.tessie.com")
-        .defaultHeaders { it.set("Authorization", "Bearer: $token") }
         .defaultHeaders { it.set("Content-Type", "application/json") }
         .build()
+
+    override fun getType(): TeslaConnectionType {
+        return TeslaConnectionType.TESSIE
+    }
 
     /**
      *  Wakes up the car with the given vin
      *  @return true if the car was successfully woken up
      */
-    fun wake() : Boolean {
+    override fun wake() : Boolean {
         val result = restClient.post()
             .uri("/{vin}/wake", vin)
+            .header("Authorization", "Bearer: $token")
             .retrieve()
             .toEntity<String>()
 
@@ -35,9 +47,10 @@ class TessieConnectionClient(private val vin: String, private val token: String)
      *  Gets the location of the car with the given vin
      *  @return the location of the car
      */
-    fun getLocation() : TeslaLocation {
+    override fun getLocation() : TeslaLocation {
         val result = restClient.get()
-            .uri("https://api.tessie.com/{vin}/location", vin)
+            .uri("/{vin}/location", vin)
+            .header("Authorization", "Bearer: $token")
             .retrieve()
             .toEntity<TeslaLocation>()
 
@@ -49,5 +62,9 @@ class TessieConnectionClient(private val vin: String, private val token: String)
         println(result.body)
 
         return result.body ?: throw Exception("Failed to get location")
+    }
+
+    override fun getStatus(): String {
+        TODO("Not yet implemented")
     }
 }
