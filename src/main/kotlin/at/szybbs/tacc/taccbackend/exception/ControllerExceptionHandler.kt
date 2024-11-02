@@ -1,7 +1,11 @@
 package at.szybbs.tacc.taccbackend.exception
 
-import at.szybbs.tacc.taccbackend.exception.calendarConnection.*
-import at.szybbs.tacc.taccbackend.exception.teslaConnection.*
+import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnectionAlreadyExistsException
+import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnectionNotFoundException
+import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnectionValidationException
+import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionAlreadyExistsException
+import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionNotFoundException
+import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionValidationException
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -21,11 +25,9 @@ import java.time.LocalDateTime
 class ControllerExceptionHandler {
 
     @ExceptionHandler(
-        UserInformationNotFoundException::class,
         CalendarConnectionNotFoundException::class,
-        ActiveCalendarConnectionNotFoundException::class,
+        UserInformationNotFoundException::class,
         TeslaConnectionNotFoundException::class,
-        ActiveTeslaConnectionNotFoundException::class,
     )
     fun handleCustomResourceNotFoundException(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.NOT_FOUND)
@@ -35,26 +37,16 @@ class ControllerExceptionHandler {
         CalendarConnectionAlreadyExistsException::class,
         TeslaConnectionAlreadyExistsException::class,
     )
-    fun handleConflictExceptions(e: CalendarConnectionAlreadyExistsException): ResponseEntity<ErrorResponse> {
+    fun handleConflictExceptions(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.CONFLICT)
     }
 
     @ExceptionHandler(
-        InvalidCalendarConnectionConfigFormatException::class,
-        IllegalCalendarConnectionConfigValueException::class,
-        InvalidTeslaConnectionConfigFormatException::class,
-        IllegalTeslaConnectionConfigValueException::class,
+        CalendarConnectionValidationException::class,
+        TeslaConnectionValidationException::class,
     )
     fun handleCustomBadRequestException(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.BAD_REQUEST)
-    }
-
-    @ExceptionHandler(
-        UnsupportedCalendarTypeException::class,
-        UnsupportedTeslaConnectionTypeException::class,
-    )
-    fun handleCustomInternalErrorException(e: RuntimeException): ResponseEntity<ErrorResponse> {
-        return createErrorResponse(e = e, status = HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     /**
@@ -77,6 +69,7 @@ class ControllerExceptionHandler {
                 message = e.message ?: "An unexpected error occurred",
                 timestamp = LocalDateTime.now().toString(),
                 path = request.requestURI
-        ))
+        )
+        )
     }
 }

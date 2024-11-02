@@ -1,6 +1,6 @@
 package at.szybbs.tacc.taccbackend.repository.userInformation
 
-import at.szybbs.tacc.taccbackend.model.userInformation.UserInformation
+import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import org.springframework.data.jpa.repository.JpaRepository
 import java.util.*
 
