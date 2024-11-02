@@ -5,6 +5,8 @@ import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnection
 import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
+import org.hibernate.annotations.OnDelete
+import org.hibernate.annotations.OnDeleteAction
 import java.util.UUID
 
 @Entity
@@ -17,7 +19,9 @@ data class TessieConnection(
     override var userInformationId: UUID,
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_information_id", insertable=false, updatable=false)
+    @MapsId("userInformationId")
+    @JoinColumn(name = "user_information_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonIgnore
     override var userInformation: UserInformation? = null,
 
