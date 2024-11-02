@@ -3,6 +3,7 @@ package at.szybbs.tacc.taccbackend.controller.calendarConnections
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.CalendarConnectionCreationDto
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.CalendarConnectionResponseDto
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.CalendarConnectionUpdateDto
+import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import org.springframework.http.ResponseEntity
 import java.util.UUID
 
@@ -19,6 +20,8 @@ import java.util.UUID
 interface CalendarConnectionController<R: CalendarConnectionCreationDto, E: CalendarConnectionResponseDto, U: CalendarConnectionUpdateDto> {
     fun getCalendarConnection(userInformationId: UUID) : ResponseEntity<E>
     fun createCalendarConnection(userInformationId: UUID, creationDto: R) : ResponseEntity<E>
-    fun updateCalendarConnection(userInformationId: UUID, updateDto: U) : ResponseEntity<E>
+    fun updateCalendarConnectionPublicFields(userInformationId: UUID, updateDto: U) : ResponseEntity<E>
     fun deleteCalendarConnection(userInformationId: UUID) : ResponseEntity<Void>
+    fun setCalendarConnectionToActive(userInformationId: UUID) : ResponseEntity<UserInformationResponseDto>
+    fun setCalendarConnectionToInActive(userInformationId: UUID) : ResponseEntity<UserInformationResponseDto>
 }

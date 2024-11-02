@@ -3,6 +3,7 @@ package at.szybbs.tacc.taccbackend.service.teslaConnections
 import at.szybbs.tacc.taccbackend.dto.teslaConnections.TeslaConnectionCreationDto
 import at.szybbs.tacc.taccbackend.dto.teslaConnections.TeslaConnectionUpdateDto
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnection
+import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import java.util.UUID
 
 /**
@@ -15,7 +16,9 @@ import java.util.UUID
 interface TeslaConnectionService<T: TeslaConnection, R: TeslaConnectionCreationDto, U: TeslaConnectionUpdateDto> {
     fun getTeslaConnection(userInformationId: UUID) : T
     fun createTeslaConnection(userInformationId: UUID, creationDto: R) : T
-    fun updateTeslaConnection(userInformationId: UUID, updateDto: U) : T
+    fun updateTeslaConnectionPublicFields(userInformationId: UUID, updateDto: U) : T
     fun deleteTeslaConnection(userInformationId: UUID)
+    fun setTeslaConnectionToActive(userInformationId: UUID) : UserInformation
+    fun setTeslaConnectionToInactive(userInformationId: UUID) : UserInformation
     fun teslaConnectionExists(userInformationId: UUID): Boolean
 }

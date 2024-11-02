@@ -7,6 +7,10 @@ import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnecti
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationNotFoundException
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarConnection
+import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
+import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnectionValidationException
+import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationCalendarConnectionAlreadyActiveException
+import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationUnexpectedStateException
 import at.szybbs.tacc.taccbackend.repository.calendarConnections.GoogleCalendarConnectionRepository
 import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
 import org.springframework.stereotype.Service
@@ -30,6 +34,7 @@ class GoogleCalendarConnectionService (
     @Throws(
         UserInformationNotFoundException::class,
         CalendarConnectionAlreadyExistsException::class,
+        CalendarConnectionValidationException::class,
     )
     override fun createCalendarConnection(
         userInformationId: UUID,
@@ -47,16 +52,15 @@ class GoogleCalendarConnectionService (
         return googleCalendarConnectionRepository.save(newGoogleCalendarConnection)
     }
 
-    @Throws(CalendarConnectionNotFoundException::class,)
-    override fun updateCalendarConnection(
+    @Throws(
+        CalendarConnectionNotFoundException::class,
+        CalendarConnectionValidationException::class,
+    )
+    override fun updateCalendarConnectionPublicFields(
         userInformationId: UUID,
         updateDto: GoogleCalendarConnectionUpdateDto
     ): GoogleCalendarConnection {
-        val updatedGoogleCalendarConnectionOpt = googleCalendarConnectionRepository.findById(userInformationId)
-
-        if (updatedGoogleCalendarConnectionOpt.isEmpty) throw CalendarConnectionNotFoundException(CalendarType.GOOGLE_CALENDAR, userInformationId)
-
-        val updatedGoogleCalendarConnection = updatedGoogleCalendarConnectionOpt.get()
+        val updatedGoogleCalendarConnection = getCalendarConnection(userInformationId)
 
         updatedGoogleCalendarConnection.keyword = updateDto.keyword
 
@@ -68,6 +72,40 @@ class GoogleCalendarConnectionService (
         val googleCalendarConnection = getCalendarConnection(userInformationId)
 
         googleCalendarConnectionRepository.delete(googleCalendarConnection)
+    }
+
+    @Throws(
+        UserInformationNotFoundException::class,
+        CalendarConnectionNotFoundException::class,
+        UserInformationCalendarConnectionAlreadyActiveException::class,
+    )
+    override fun setCalendarConnectionToActive(userInformationId: UUID): UserInformation {
+        val userInformation = userInformationService.getUserInformation(userInformationId)
+
+        if (userInformation.activeCalendarConnectionType == CalendarType.GOOGLE_CALENDAR)
+            throw UserInformationCalendarConnectionAlreadyActiveException(userInformationId, CalendarType.GOOGLE_CALENDAR)
+
+        if (!calendarConnectionExists(userInformationId))
+            throw CalendarConnectionNotFoundException(CalendarType.GOOGLE_CALENDAR, userInformationId)
+
+        return userInformationService.setActiveCalendarConnectionType(userInformationId, CalendarType.GOOGLE_CALENDAR)
+    }
+
+    @Throws(
+        UserInformationNotFoundException::class,
+        CalendarConnectionNotFoundException::class,
+        UserInformationUnexpectedStateException::class,
+    )
+    override fun setCalendarConnectionToInactive(userInformationId: UUID): UserInformation {
+        val userInformation = userInformationService.getUserInformation(userInformationId)
+
+        if (userInformation.activeCalendarConnectionType != CalendarType.GOOGLE_CALENDAR)
+            throw UserInformationUnexpectedStateException("activeCalendarConnectionType", CalendarType.GOOGLE_CALENDAR.name)
+
+        if (!calendarConnectionExists(userInformationId))
+            throw CalendarConnectionNotFoundException(CalendarType.GOOGLE_CALENDAR, userInformationId)
+
+        return userInformationService.setActiveCalendarConnectionType(userInformationId, null)
     }
 
     override fun calendarConnectionExists(userInformationId: UUID): Boolean {

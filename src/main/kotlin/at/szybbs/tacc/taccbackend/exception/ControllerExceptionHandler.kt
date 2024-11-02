@@ -6,7 +6,7 @@ import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnecti
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionAlreadyExistsException
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionNotFoundException
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionValidationException
-import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationNotFoundException
+import at.szybbs.tacc.taccbackend.exception.userInformation.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -36,6 +36,9 @@ class ControllerExceptionHandler {
     @ExceptionHandler(
         CalendarConnectionAlreadyExistsException::class,
         TeslaConnectionAlreadyExistsException::class,
+        UserInformationAlreadyExistsException::class,
+        UserInformationTeslaConnectionAlreadyActiveException::class,
+        UserInformationCalendarConnectionAlreadyActiveException::class,
     )
     fun handleConflictExceptions(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.CONFLICT)
@@ -44,6 +47,8 @@ class ControllerExceptionHandler {
     @ExceptionHandler(
         CalendarConnectionValidationException::class,
         TeslaConnectionValidationException::class,
+        UserInformationValidationException::class,
+        UserInformationUnexpectedStateException::class,
     )
     fun handleCustomBadRequestException(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.BAD_REQUEST)

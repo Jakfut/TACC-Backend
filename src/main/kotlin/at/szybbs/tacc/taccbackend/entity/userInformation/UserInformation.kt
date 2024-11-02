@@ -1,11 +1,13 @@
 package at.szybbs.tacc.taccbackend.entity.userInformation
 
+import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import jakarta.persistence.*
 import java.util.*
 
 @Entity
+@EntityListeners(UserInformationListener::class)
 @Table(name = "user_information")
 data class UserInformation(
     @Id
@@ -46,4 +48,16 @@ data class UserInformation(
      */
     @Column(name = "active_tesla_connection_type")
     var activeTeslaConnectionType: TeslaConnectionType? = null,
-)
+) {
+    fun toResponseDto() : UserInformationResponseDto {
+        return UserInformationResponseDto(
+            id = id,
+            email = email,
+            noDestMinutes = noDestMinutes,
+            ccRuntimeMinutes = ccRuntimeMinutes,
+            arrivalBufferMinutes = arrivalBufferMinutes,
+            activeCalendarConnectionType = activeCalendarConnectionType,
+            activeTeslaConnectionType = activeTeslaConnectionType
+        )
+    }
+}

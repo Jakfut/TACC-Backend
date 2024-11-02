@@ -15,8 +15,4 @@ class TessieConnectionListener (
     fun validate(tessieConnection: TessieConnection) {
         validator.validate(tessieConnection)
     }
-
-    /**
-     * TODO: implement encryption/decryption
-     */
 }

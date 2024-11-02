@@ -3,6 +3,7 @@ package at.szybbs.tacc.taccbackend.service.calendarConnections
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.CalendarConnectionCreationDto
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.CalendarConnectionUpdateDto
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarConnection
+import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import java.util.UUID
 
 /**
@@ -15,7 +16,9 @@ import java.util.UUID
 interface CalendarConnectionService<T: CalendarConnection, R: CalendarConnectionCreationDto, U: CalendarConnectionUpdateDto> {
     fun getCalendarConnection(userInformationId: UUID) : T
     fun createCalendarConnection(userInformationId: UUID, creationDto: R) : T
-    fun updateCalendarConnection(userInformationId: UUID, updateDto: U) : T
+    fun updateCalendarConnectionPublicFields(userInformationId: UUID, updateDto: U) : T
     fun deleteCalendarConnection(userInformationId: UUID)
+    fun setCalendarConnectionToActive(userInformationId: UUID) : UserInformation
+    fun setCalendarConnectionToInactive(userInformationId: UUID) : UserInformation
     fun calendarConnectionExists(userInformationId: UUID): Boolean
 }

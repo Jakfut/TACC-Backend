@@ -15,8 +15,4 @@ class GoogleCalendarConnectionListener (
     fun validate(googleCalendarConnection: GoogleCalendarConnection) {
         validator.validate(googleCalendarConnection)
     }
-
-    /**
-     * TODO: implement encryption/decryption
-     */
 }
