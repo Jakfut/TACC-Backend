@@ -14,7 +14,7 @@ import java.util.*
 class TaccBackendApplication
 
 fun main(args: Array<String>) {
-	//runApplication<TaccBackendApplication>(*args)
+	val applicationContext = runApplication<TaccBackendApplication>(*args)
 
 	/*scheduleAc(
 		AcRunnable("123", UUID.randomUUID(), true),
@@ -26,8 +26,7 @@ fun main(args: Array<String>) {
 	println(tessieConnectionClient.getLocation())*/
 
 	// get the connection factory bean
-	val connectionFactory = runApplication<TaccBackendApplication>(*args)
-		.getBean(TeslaConnectionFactory::class.java)
+	val connectionFactory = applicationContext.getBean(TeslaConnectionFactory::class.java)
 
 	// create a tesla connection client
 	val teslaConnectionClient = connectionFactory.createTeslaConnectionClient(
