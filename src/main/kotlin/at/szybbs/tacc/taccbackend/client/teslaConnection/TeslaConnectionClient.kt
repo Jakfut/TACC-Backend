@@ -1,6 +1,6 @@
 package at.szybbs.tacc.taccbackend.client.teslaConnection
 
-import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaConnectionType
+import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
 
 

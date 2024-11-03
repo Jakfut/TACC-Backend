@@ -1,7 +1,7 @@
 package at.szybbs.tacc.taccbackend.factory
 
 import at.szybbs.tacc.taccbackend.client.teslaConnection.TeslaConnectionClient
-import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaConnectionType
+import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import jakarta.annotation.PostConstruct
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service

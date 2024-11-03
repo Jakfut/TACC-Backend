@@ -1,8 +1,8 @@
 package at.szybbs.tacc.taccbackend
 
 import at.szybbs.tacc.taccbackend.client.teslaConnection.TessieConnectionClient
+import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
-import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaConnectionType
 import at.szybbs.tacc.taccbackend.runnable.acRunnable.AcRunnable
 import at.szybbs.tacc.taccbackend.runnable.acRunnable.scheduleAc
 import org.springframework.boot.autoconfigure.SpringBootApplication
