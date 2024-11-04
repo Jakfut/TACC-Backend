@@ -6,5 +6,5 @@ import java.util.*
  * DTO for responses related to calendar connections.
  */
 interface CalendarConnectionResponseDto {
-    var userInformationId: UUID
+    val userInformationId: UUID
 }
