@@ -3,7 +3,6 @@ package at.szybbs.tacc.taccbackend.client.teslaConnection
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
 import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -36,6 +35,7 @@ class TessieConnectionClient: TeslaConnectionClient {
      *  Wakes up the car with the given vin
      *  @return true if the car was successfully woken up
      */
+
     override fun wake() : Boolean {
         val result = restClient.post()
             .uri("/{vin}/wake", vin)
@@ -57,6 +57,7 @@ class TessieConnectionClient: TeslaConnectionClient {
      *  Gets the location of the car with the given vin
      *  @return the location of the car
      */
+
     override fun getLocation() : TeslaLocation {
         val result = restClient.get()
             .uri("/{vin}/location", vin)
@@ -74,33 +75,48 @@ class TessieConnectionClient: TeslaConnectionClient {
         return result.body ?: throw Exception("Failed to get location")
     }
 
+    /**
+     *  Gets the status of the car with the given vin
+     *  @return the status of the car
+     */
+
     override fun getStatus(): String {
         val result = restClient.get()
             .uri("/{vin}/status", vin)
             .header("Authorization", "Bearer: $token")
             .retrieve()
-            .toEntity<String>()
+            .toEntity(Map::class.java)
 
         if (!result.statusCode.is2xxSuccessful) {
             throw Exception("Failed to get status")
             // TODO handle error
         }
 
-        val objectMapper = jacksonObjectMapper()
-        val status = objectMapper.readValue(result.body, Map::class.java)
+        // Safely extract the "status" value from the Map
+        val status = result.body?.get("status") as? String ?: throw Exception("Status not found")
 
-        return status["status"] as String
+        return status
     }
 
+    /**
+     *  Changes the ac state of the car with the given vin
+     *  @param state the new state of the ac
+     *  @return true if the ac state was successfully changed
+     */
+
     override fun changeAcState(state: Boolean): Boolean {
+        val endpoint = if (state) "start_climate" else "stop_climate"
+
         val result = restClient.post()
-            .uri("/{vin}/ac", vin)
+            .uri("/{vin}/command/$endpoint", vin)
             .header("Authorization", "Bearer: $token")
+            .contentLength(0)
             .body(state)
             .retrieve()
             .toEntity<String>()
 
         if (!result.statusCode.is2xxSuccessful) {
+            println(result.body)
             throw Exception("Failed to change ac state")
             // TODO handle error
         }

@@ -40,8 +40,17 @@ class TessieClientTests {
     }
 
     @Test
-    fun changeAcState() {
+    fun changeAcStateToTrue() {
         val result = teslaConnectionClient.changeAcState(true)
+
+        println("AC State: $result")
+
+        assert(result)
+    }
+
+    @Test
+    fun changeAcStateToFalse() {
+        val result = teslaConnectionClient.changeAcState(false)
 
         println("AC State: $result")
 
