@@ -2,16 +2,22 @@ package at.szybbs.tacc.taccbackend.client.teslaConnection
 
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
+import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.toEntity
+import java.util.UUID
 
 @Component
 @Scope("prototype")
 class TessieConnectionClient: TeslaConnectionClient {
-    override lateinit var vin: String
-    override lateinit var token: String
+    final override lateinit var userId: UUID
+
+    @Autowired
+    private lateinit var tessieConnectionService: TessieConnectionService
 
     private val restClient = RestClient.builder()
         .baseUrl("https://api.tessie.com")
@@ -21,6 +27,10 @@ class TessieConnectionClient: TeslaConnectionClient {
     override fun getType(): TeslaConnectionType {
         return TeslaConnectionType.TESSIE
     }
+
+    private val vin: String by lazy { tessieConnectionService.getTeslaConnection(userId).vin.toString() }
+    private val token: String by lazy { tessieConnectionService.getTeslaConnection(userId).accessToken.toString() }
+
 
     /**
      *  Wakes up the car with the given vin
@@ -65,6 +75,36 @@ class TessieConnectionClient: TeslaConnectionClient {
     }
 
     override fun getStatus(): String {
-        TODO("Not yet implemented")
+        val result = restClient.get()
+            .uri("/{vin}/status", vin)
+            .header("Authorization", "Bearer: $token")
+            .retrieve()
+            .toEntity<String>()
+
+        if (!result.statusCode.is2xxSuccessful) {
+            throw Exception("Failed to get status")
+            // TODO handle error
+        }
+
+        val objectMapper = jacksonObjectMapper()
+        val status = objectMapper.readValue(result.body, Map::class.java)
+
+        return status["status"] as String
+    }
+
+    override fun changeAcState(state: Boolean): Boolean {
+        val result = restClient.post()
+            .uri("/{vin}/ac", vin)
+            .header("Authorization", "Bearer: $token")
+            .body(state)
+            .retrieve()
+            .toEntity<String>()
+
+        if (!result.statusCode.is2xxSuccessful) {
+            throw Exception("Failed to change ac state")
+            // TODO handle error
+        }
+
+        return result.statusCode.is2xxSuccessful
     }
 }

@@ -26,7 +26,8 @@ import java.util.*
  */
 @RestController
 @RequestMapping("/api/user/{user-information-id}/tesla-connection/tessie")
-class TessieConnectionController (
+class
+TessieConnectionController (
     private val tessieConnectionService: TessieConnectionService
 ) : TeslaConnectionController<
         TessieConnectionCreationDto,
