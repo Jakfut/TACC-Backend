@@ -3,20 +3,19 @@ package at.szybbs.tacc.taccbackend.client.teslaConnection
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
 import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.toEntity
-import java.util.UUID
+import java.util.*
+
 
 @Component
 @Scope("prototype")
-class TessieConnectionClient: TeslaConnectionClient {
-    final override lateinit var userId: UUID
-
-    @Autowired
-    private lateinit var tessieConnectionService: TessieConnectionService
+class TessieConnectionClient(
+    private val tessieConnectionService: TessieConnectionService
+): TeslaConnectionClient {
+    override lateinit var userId: UUID
 
     private val restClient = RestClient.builder()
         .baseUrl("https://api.tessie.com")
@@ -95,6 +94,8 @@ class TessieConnectionClient: TeslaConnectionClient {
         // Safely extract the "status" value from the Map
         val status = result.body?.get("status") as? String ?: throw Exception("Status not found")
 
+        println("Status: $status")
+
         return status
     }
 
@@ -120,6 +121,8 @@ class TessieConnectionClient: TeslaConnectionClient {
             throw Exception("Failed to change ac state")
             // TODO handle error
         }
+
+        println("AC State: $state")
 
         return result.statusCode.is2xxSuccessful
     }

@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import java.util.*
 import kotlin.test.Test
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
 class TessieClientTests {
     @Autowired
     private lateinit var teslaConnectionFactory: TeslaConnectionFactory
