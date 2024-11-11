@@ -28,16 +28,23 @@ class UserInformationService (
         UserInformationAlreadyExistsException::class,
         UserInformationValidationException::class,
     )
-    fun createUserInformation(userInformationId: UUID, creationDto: UserInformationCreationDto, jwtEmail: String) : UserInformation {
+    fun createUserInformation(userInformationId: UUID, creationDto: UserInformationCreationDto?, jwtEmail: String) : UserInformation {
         if (userInformationExists(userInformationId)) throw UserInformationAlreadyExistsException(userInformationId)
 
-        val newUserInformation = UserInformation(
-            id = userInformationId,
-            email = jwtEmail,
-            noDestMinutes = creationDto.noDestMinutes,
-            ccRuntimeMinutes = creationDto.ccRuntimeMinutes,
-            arrivalBufferMinutes = creationDto.arrivalBufferMinutes,
-        )
+        val newUserInformation = if (creationDto != null) {
+            UserInformation(
+                id = userInformationId,
+                email = jwtEmail,
+                noDestMinutes = creationDto.noDestMinutes,
+                ccRuntimeMinutes = creationDto.ccRuntimeMinutes,
+                arrivalBufferMinutes = creationDto.arrivalBufferMinutes,
+            )
+        } else {
+            UserInformation(
+                id = userInformationId,
+                email = jwtEmail,
+            )
+        }
 
         return userInformationRepository.save(newUserInformation)
     }
@@ -53,32 +60,50 @@ class UserInformationService (
         UserInformationNotFoundException::class,
         UserInformationValidationException::class,
     )
-    fun updateUserInformationDefaultValues(userInformationId: UUID, updateDto: UserInformationUpdateDefaultValuesDto) : UserInformation {
+    fun updateUserInformationDefaultValues(userInformationId: UUID, updateDto: UserInformationUpdateDefaultValuesDto) : UserInformation? {
         val userInformation = getUserInformation(userInformationId)
+
+        if (!updateDto.hasChanged(userInformation)) return null
 
         userInformation.noDestMinutes = updateDto.noDestMinutes
         userInformation.ccRuntimeMinutes = updateDto.ccRuntimeMinutes
         userInformation.arrivalBufferMinutes = updateDto.arrivalBufferMinutes
 
-        return userInformationRepository.save(userInformation)
+        val updatedUserInformation = userInformationRepository.save(userInformation)
+
+        // TODO: call/update http-Client
+
+        return updatedUserInformation
     }
 
     @Throws(UserInformationNotFoundException::class)
-    fun setActiveCalendarConnectionType(userInformationId: UUID, calendarType: CalendarType?): UserInformation {
+    fun setActiveCalendarConnectionType(userInformationId: UUID, calendarType: CalendarType?): UserInformation? {
         val userInformation = getUserInformation(userInformationId)
+
+        if (userInformation.activeCalendarConnectionType == calendarType) return null
 
         userInformation.activeCalendarConnectionType = calendarType
 
-        return userInformationRepository.save(userInformation)
+        val updatedUserInformation = userInformationRepository.save(userInformation)
+
+        // TODO: call/update http-Client
+
+        return updatedUserInformation
     }
 
     @Throws(UserInformationNotFoundException::class)
-    fun setActiveTeslaConnectionType(userInformationId: UUID, teslaConnectionType: TeslaConnectionType?) : UserInformation {
+    fun setActiveTeslaConnectionType(userInformationId: UUID, teslaConnectionType: TeslaConnectionType?) : UserInformation? {
         val userInformation = getUserInformation(userInformationId)
+
+        if (userInformation.activeTeslaConnectionType == teslaConnectionType) return null
 
         userInformation.activeTeslaConnectionType = teslaConnectionType
 
-        return userInformationRepository.save(userInformation)
+        val updatedUserInformation = userInformationRepository.save(userInformation)
+
+        // TODO: call/update http-Client
+
+        return updatedUserInformation
     }
 
     fun userInformationExists(userInformationId: UUID): Boolean {

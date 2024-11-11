@@ -9,8 +9,6 @@ import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionAlreadyExistsException
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionNotFoundException
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionValidationException
-import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationTeslaConnectionAlreadyActiveException
-import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationUnexpectedStateException
 import at.szybbs.tacc.taccbackend.repository.teslaConnections.TessieConnectionRepository
 import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
 import org.springframework.stereotype.Service
@@ -20,13 +18,10 @@ import java.util.*
 class TessieConnectionService (
     private val tessieConnectionRepository: TessieConnectionRepository,
     private val userInformationService: UserInformationService,
-) : TeslaConnectionService<
-        TessieConnection,
-        TessieConnectionCreationDto,
-        TessieConnectionUpdateDto> {
+) {
 
     @Throws(TeslaConnectionNotFoundException::class)
-    override fun getTeslaConnection(userInformationId: UUID): TessieConnection {
+    fun getTeslaConnection(userInformationId: UUID): TessieConnection {
        return tessieConnectionRepository.findById(userInformationId)
            .orElseThrow { TeslaConnectionNotFoundException(TeslaConnectionType.TESSIE, userInformationId) }
     }
@@ -36,7 +31,7 @@ class TessieConnectionService (
         TeslaConnectionAlreadyExistsException::class,
         TeslaConnectionValidationException::class,
     )
-    override fun createTeslaConnection(
+    fun createTeslaConnection(
         userInformationId: UUID,
         creationDto: TessieConnectionCreationDto
     ): TessieConnection {
@@ -57,20 +52,26 @@ class TessieConnectionService (
         TeslaConnectionNotFoundException::class,
         TeslaConnectionValidationException::class,
     )
-    override fun updateTeslaConnectionPublicFields(
+    fun updateTeslaConnectionPublicFields(
         userInformationId: UUID,
         updateDto: TessieConnectionUpdateDto
-    ): TessieConnection {
-        val updatedTessieConnection = getTeslaConnection(userInformationId)
+    ): TessieConnection? {
+        val teslaConnection = getTeslaConnection(userInformationId)
 
-        updatedTessieConnection.vin = updateDto.vin
-        updatedTessieConnection.accessToken = updateDto.accessToken
+        if (!updateDto.hasChanged(teslaConnection)) return null
 
-        return tessieConnectionRepository.save(updatedTessieConnection)
+        teslaConnection.vin = updateDto.vin
+        teslaConnection.accessToken = updateDto.accessToken
+
+        val updatedTeslaConnection = tessieConnectionRepository.save(teslaConnection)
+
+        // TODO: call/update http-Client
+
+        return updatedTeslaConnection
     }
 
     @Throws(TeslaConnectionNotFoundException::class)
-    override fun deleteTeslaConnection(userInformationId: UUID) {
+    fun deleteTeslaConnection(userInformationId: UUID) {
         val tessieConnection = getTeslaConnection(userInformationId)
 
         tessieConnectionRepository.delete(tessieConnection)
@@ -79,38 +80,15 @@ class TessieConnectionService (
     @Throws(
         UserInformationNotFoundException::class,
         TeslaConnectionNotFoundException::class,
-        UserInformationTeslaConnectionAlreadyActiveException::class,
     )
-    override fun setTeslaConnectionToActive(userInformationId: UUID): UserInformation {
-        val userInformation = userInformationService.getUserInformation(userInformationId)
-
-        if (userInformation.activeTeslaConnectionType == TeslaConnectionType.TESSIE)
-            throw UserInformationTeslaConnectionAlreadyActiveException(userInformationId, TeslaConnectionType.TESSIE)
-
+    fun setTeslaConnectionToActive(userInformationId: UUID): UserInformation? {
         if (!teslaConnectionExists(userInformationId))
             throw TeslaConnectionNotFoundException(TeslaConnectionType.TESSIE, userInformationId)
 
         return userInformationService.setActiveTeslaConnectionType(userInformationId, TeslaConnectionType.TESSIE)
     }
 
-    @Throws(
-        UserInformationNotFoundException::class,
-        TeslaConnectionNotFoundException::class,
-        UserInformationUnexpectedStateException::class,
-    )
-    override fun setTeslaConnectionToInactive(userInformationId: UUID): UserInformation {
-        val userInformation = userInformationService.getUserInformation(userInformationId)
-
-        if (userInformation.activeTeslaConnectionType != TeslaConnectionType.TESSIE)
-            throw UserInformationUnexpectedStateException("activeTeslaConnectionType", TeslaConnectionType.TESSIE.name)
-
-        if (!teslaConnectionExists(userInformationId))
-            throw TeslaConnectionNotFoundException(TeslaConnectionType.TESSIE, userInformationId)
-
-        return userInformationService.setActiveTeslaConnectionType(userInformationId, null)
-    }
-
-    override fun teslaConnectionExists(userInformationId: UUID): Boolean {
+    fun teslaConnectionExists(userInformationId: UUID): Boolean {
         return tessieConnectionRepository.findById(userInformationId).isPresent
     }
 }

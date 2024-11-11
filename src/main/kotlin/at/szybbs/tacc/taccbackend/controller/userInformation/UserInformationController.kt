@@ -34,7 +34,7 @@ class UserInformationController (
     @PostMapping
     fun createUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID,
-        @RequestBody creationDto: UserInformationCreationDto
+        @RequestBody creationDto: UserInformationCreationDto?
     ) : ResponseEntity<UserInformationResponseDto> {
         val responseDto = userInformationService.createUserInformation(userInformationId, creationDto, "email@email.com")
             .toResponseDto()
@@ -59,7 +59,27 @@ class UserInformationController (
         @RequestBody updateDto: UserInformationUpdateDefaultValuesDto
     ) : ResponseEntity<UserInformationResponseDto> {
         val responseDto = userInformationService.updateUserInformationDefaultValues(userInformationId, updateDto)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("calendar-connections/inactive")
+    fun setActiveCalendarConnectionToNull(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ) : ResponseEntity<UserInformationResponseDto> {
+        val responseDto = userInformationService.setActiveCalendarConnectionType(userInformationId, null)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("tesla-connections/inactive")
+    fun setActiveTeslaConnectionToNull(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ) : ResponseEntity<UserInformationResponseDto> {
+        val responseDto = userInformationService.setActiveTeslaConnectionType(userInformationId, null)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }

@@ -37,8 +37,6 @@ class ControllerExceptionHandler {
         CalendarConnectionAlreadyExistsException::class,
         TeslaConnectionAlreadyExistsException::class,
         UserInformationAlreadyExistsException::class,
-        UserInformationTeslaConnectionAlreadyActiveException::class,
-        UserInformationCalendarConnectionAlreadyActiveException::class,
     )
     fun handleConflictExceptions(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.CONFLICT)
@@ -48,7 +46,6 @@ class ControllerExceptionHandler {
         CalendarConnectionValidationException::class,
         TeslaConnectionValidationException::class,
         UserInformationValidationException::class,
-        UserInformationUnexpectedStateException::class,
     )
     fun handleCustomBadRequestException(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.BAD_REQUEST)

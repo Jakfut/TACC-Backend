@@ -4,6 +4,7 @@ import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleC
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarConnectionResponseDto
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarConnectionUpdateDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
+import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarConnection
 import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -25,16 +26,13 @@ import java.util.*
  * @property googleCalendarConnectionService Service for managing Google Calendar connections.
  */
 @RestController
-@RequestMapping("/api/user/{user-information-id}/calendar-connection/google-calendar")
+@RequestMapping("/api/user/{user-information-id}/calendar-connections/google-calendar")
 class GoogleCalendarConnectionController (
     private val googleCalendarConnectionService: GoogleCalendarConnectionService
-) : CalendarConnectionController<
-        GoogleCalendarConnectionCreationDto,
-        GoogleCalendarConnectionResponseDto,
-        GoogleCalendarConnectionUpdateDto> {
+) {
 
     @GetMapping
-    override fun getCalendarConnection(
+    fun getCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
     ) : ResponseEntity<GoogleCalendarConnectionResponseDto> {
         val responseDto = googleCalendarConnectionService.getCalendarConnection(userInformationId)
@@ -44,7 +42,7 @@ class GoogleCalendarConnectionController (
     }
 
     @DeleteMapping
-    override fun deleteCalendarConnection(
+    fun deleteCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<Void> {
         googleCalendarConnectionService.deleteCalendarConnection(userInformationId)
@@ -53,38 +51,28 @@ class GoogleCalendarConnectionController (
     }
 
     @PatchMapping("/active")
-    override fun setCalendarConnectionToActive(
+    fun setCalendarConnectionToActive(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<UserInformationResponseDto> {
         val responseDto = googleCalendarConnectionService.setCalendarConnectionToActive(userInformationId)
-            .toResponseDto()
-
-        return ResponseEntity.ok(responseDto)
-    }
-
-    @PatchMapping("/inactive")
-    override fun setCalendarConnectionToInActive(
-        @PathVariable("user-information-id") userInformationId: UUID
-    ): ResponseEntity<UserInformationResponseDto> {
-        val responseDto = googleCalendarConnectionService.setCalendarConnectionToInactive(userInformationId)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }
 
     @PatchMapping
-    override fun updateCalendarConnectionPublicFields(
+    fun updateCalendarConnectionPublicFields(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody updateDto: GoogleCalendarConnectionUpdateDto
     ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
         val responseDto = googleCalendarConnectionService.updateCalendarConnectionPublicFields(userInformationId, updateDto)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }
 
     @PostMapping
-    override fun createCalendarConnection(
+    fun createCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: GoogleCalendarConnectionCreationDto
     ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
