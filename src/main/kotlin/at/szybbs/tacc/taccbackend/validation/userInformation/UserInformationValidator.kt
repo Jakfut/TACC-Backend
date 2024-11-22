@@ -24,7 +24,5 @@ class UserInformationValidator {
         val arrivalBufferMinutes = userInformation.arrivalBufferMinutes
         if (arrivalBufferMinutes < 0 || arrivalBufferMinutes > 60)
             throw UserInformationValidationException("arrivalBufferMinutes", arrivalBufferMinutes.toString())
-
-        // TODO: Implement further validation and adapt validation values for default values
     }
 }

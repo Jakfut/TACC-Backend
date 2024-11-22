@@ -1,6 +1,7 @@
 package at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar
 
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarConnectionResponseDto
+import at.szybbs.tacc.taccbackend.encryption.AttributeEncryptor
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarConnection
 import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -25,17 +26,20 @@ data class GoogleCalendarConnection(
     @JsonIgnore
     override var userInformation: UserInformation? = null,
 
-    @Column(name = "access_token")
+    @Convert(converter = AttributeEncryptor::class)
+    @Column(name = "access_token", columnDefinition = "TEXT")
     var accessToken: String? = null,
 
-    @Column(name = "refresh_token")
+    @Convert(converter = AttributeEncryptor::class)
+    @Column(name = "refresh_token", columnDefinition = "TEXT")
     var refreshToken: String? = null,
 
-    @Column(name = "email")
+    @Column(name = "email", columnDefinition = "TEXT")
     var email: String? = null,
 
-    @Column(name = "keyword")
-    var keyword: String? = null,
+    @Column(name = "keyword", nullable = false)
+    var keyword: String,
+
 ) : CalendarConnection {
     override fun toResponseDto(): GoogleCalendarConnectionResponseDto {
         return GoogleCalendarConnectionResponseDto(

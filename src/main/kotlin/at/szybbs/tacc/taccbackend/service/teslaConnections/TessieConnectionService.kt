@@ -45,6 +45,8 @@ class TessieConnectionService (
             accessToken = creationDto.accessToken,
         )
 
+        // TODO: Test connection
+
         return tessieConnectionRepository.save(newTessieConnection)
     }
 
@@ -66,6 +68,8 @@ class TessieConnectionService (
         val updatedTeslaConnection = tessieConnectionRepository.save(teslaConnection)
 
         // TODO: call/update http-Client
+
+        // TODO: Test connection
 
         return updatedTeslaConnection
     }

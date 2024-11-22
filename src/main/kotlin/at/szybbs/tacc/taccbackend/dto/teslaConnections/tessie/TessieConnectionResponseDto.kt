@@ -5,6 +5,6 @@ import java.util.*
 
 data class TessieConnectionResponseDto(
     override val userInformationId: UUID,
-    val vin: String?,
-    val accessToken: String?,
+    val vin: String,
+    val accessToken: String,
 ) : TeslaConnectionResponseDto

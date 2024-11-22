@@ -8,10 +8,13 @@ import org.springframework.stereotype.Component
  *
  * This component validates the fields of a Tessie connection entity,
  * ensuring that they conform to the specified constraints.
+ *
+ * Validation is currently empty, because if the connection is valid, is tested by
+ * actually messaging the Tesla in the Service layer.
  */
 @Component
 class TessieConnectionValidator {
     fun validate(tessieConnection: TessieConnection) {
-        // TODO: Implement validation
+
     }
 }
