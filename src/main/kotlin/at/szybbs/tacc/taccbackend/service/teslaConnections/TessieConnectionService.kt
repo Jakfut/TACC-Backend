@@ -45,7 +45,7 @@ class TessieConnectionService (
             accessToken = creationDto.accessToken,
         )
 
-        // TODO: Test connection
+        // TODO: Test connection with http-Client
 
         return tessieConnectionRepository.save(newTessieConnection)
     }
@@ -69,7 +69,7 @@ class TessieConnectionService (
 
         // TODO: call/update http-Client
 
-        // TODO: Test connection
+        // TODO: Test connection with http-Client
 
         return updatedTeslaConnection
     }
@@ -90,6 +90,15 @@ class TessieConnectionService (
             throw TeslaConnectionNotFoundException(TeslaConnectionType.TESSIE, userInformationId)
 
         return userInformationService.setActiveTeslaConnectionType(userInformationId, TeslaConnectionType.TESSIE)
+    }
+
+    fun isReachable(userInformationId: UUID): Boolean {
+        if (!teslaConnectionExists(userInformationId))
+            throw TeslaConnectionNotFoundException(TeslaConnectionType.TESSIE, userInformationId)
+
+        // TODO: Test connection with http-Client
+
+        return false;
     }
 
     fun teslaConnectionExists(userInformationId: UUID): Boolean {
