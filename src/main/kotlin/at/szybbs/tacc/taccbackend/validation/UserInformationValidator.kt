@@ -1,4 +1,4 @@
-package at.szybbs.tacc.taccbackend.validation.userInformation
+package at.szybbs.tacc.taccbackend.validation
 
 import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationValidationException

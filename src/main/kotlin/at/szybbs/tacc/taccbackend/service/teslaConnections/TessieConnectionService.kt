@@ -10,7 +10,7 @@ import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionAlre
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionNotFoundException
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionValidationException
 import at.szybbs.tacc.taccbackend.repository.teslaConnections.TessieConnectionRepository
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -90,15 +90,6 @@ class TessieConnectionService (
             throw TeslaConnectionNotFoundException(TeslaConnectionType.TESSIE, userInformationId)
 
         return userInformationService.setActiveTeslaConnectionType(userInformationId, TeslaConnectionType.TESSIE)
-    }
-
-    fun isReachable(userInformationId: UUID): Boolean {
-        if (!teslaConnectionExists(userInformationId))
-            throw TeslaConnectionNotFoundException(TeslaConnectionType.TESSIE, userInformationId)
-
-        // TODO: Test connection with http-Client
-
-        return false;
     }
 
     fun teslaConnectionExists(userInformationId: UUID): Boolean {

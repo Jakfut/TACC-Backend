@@ -80,12 +80,4 @@ class TessieConnectionController (
 
         return ResponseEntity.ok(responseDto)
     }
-
-    @GetMapping("/reachable")
-    fun checkTeslaReachability(
-        @PathVariable("user-information-id") userInformationId: UUID
-    ): ResponseEntity<Boolean> {
-        val isReachable = tessieConnectionService.isReachable(userInformationId)
-        return ResponseEntity.ok(isReachable)
-    }
 }

@@ -10,7 +10,7 @@ import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.Goog
 import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnectionValidationException
 import at.szybbs.tacc.taccbackend.repository.calendarConnections.GoogleCalendarConnectionRepository
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.stereotype.Service
 import java.util.*
 

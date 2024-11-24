@@ -1,9 +1,9 @@
-package at.szybbs.tacc.taccbackend.controller.userInformation
+package at.szybbs.tacc.taccbackend.controller
 
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationUpdateDefaultValuesDto
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
