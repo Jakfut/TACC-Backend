@@ -4,7 +4,6 @@ import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleC
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarConnectionResponseDto
 import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarConnectionUpdateDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
-import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarConnection
 import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -50,7 +49,7 @@ class GoogleCalendarConnectionController (
         return ResponseEntity.noContent().build()
     }
 
-    @PatchMapping("/active")
+    @PatchMapping("/activate")
     fun setCalendarConnectionToActive(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<UserInformationResponseDto> {
@@ -78,6 +77,27 @@ class GoogleCalendarConnectionController (
     ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
         val responseDto = googleCalendarConnectionService.createCalendarConnection(userInformationId, creationDto)
             .toResponseDto()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("/authorize")
+    fun authorizeByAuthorizationCode(
+        @PathVariable("user-information-id") userInformationId: UUID,
+        @RequestBody authorizationCode: String
+    ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
+        val responseDto = googleCalendarConnectionService.authorizeByAuthorizationCode(userInformationId, authorizationCode)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("/disconnect")
+    fun disconnectGoogleCalendarApi(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
+        val responseDto = googleCalendarConnectionService.disconnectGoogleCalendarApi(userInformationId)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }

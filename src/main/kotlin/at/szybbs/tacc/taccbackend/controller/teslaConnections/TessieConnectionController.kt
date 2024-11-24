@@ -49,7 +49,7 @@ class TessieConnectionController (
         return ResponseEntity.noContent().build()
     }
 
-    @PatchMapping("/active")
+    @PatchMapping("/activate")
     fun setTeslaConnectionToActive(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<UserInformationResponseDto> {

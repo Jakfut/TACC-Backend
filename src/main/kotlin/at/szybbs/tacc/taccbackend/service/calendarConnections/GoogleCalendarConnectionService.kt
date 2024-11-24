@@ -86,6 +86,45 @@ class GoogleCalendarConnectionService (
         return userInformationService.setActiveCalendarConnectionType(userInformationId, CalendarType.GOOGLE_CALENDAR)
     }
 
+    @Throws(
+        CalendarConnectionNotFoundException::class,
+    )
+    fun authorizeByAuthorizationCode(userInformationId: UUID, authorizationCode: String): GoogleCalendarConnection? {
+        // TODO: change implementation based in implementation of http-client
+
+        val calendarConnection = getCalendarConnection(userInformationId)
+
+        val previousEmail = calendarConnection.email
+
+        // TODO: call http-client to authorize the connection and update the resource
+
+        val updatedCalendarConnection = getCalendarConnection(userInformationId)
+
+        if (previousEmail == updatedCalendarConnection.email) return null
+
+        return updatedCalendarConnection
+    }
+
+    @Throws(
+        CalendarConnectionNotFoundException::class,
+    )
+    fun disconnectGoogleCalendarApi(userInformationId: UUID) : GoogleCalendarConnection? {
+        val calendarConnection = getCalendarConnection(userInformationId)
+
+        if (calendarConnection.email == null) return null
+
+        calendarConnection.email = null
+        calendarConnection.accessToken = null
+        calendarConnection.refreshToken = null
+        calendarConnection.accessTokenExpiresAt = null
+
+        val updatedUserInformation = googleCalendarConnectionRepository.save(calendarConnection)
+
+        // TODO: call/update http-Client
+
+        return updatedUserInformation
+    }
+
     fun calendarConnectionExists(userInformationId: UUID): Boolean {
         return googleCalendarConnectionRepository.findById(userInformationId).isPresent
     }

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.*
 import org.hibernate.annotations.OnDelete
 import org.hibernate.annotations.OnDeleteAction
+import java.sql.Timestamp
 import java.util.UUID
 
 @Entity
@@ -29,6 +30,9 @@ data class GoogleCalendarConnection(
     @Convert(converter = AttributeEncryptor::class)
     @Column(name = "access_token", columnDefinition = "TEXT")
     var accessToken: String? = null,
+
+    @Column(name = "access_token_expires_at")
+    var accessTokenExpiresAt: Timestamp? = null,
 
     @Convert(converter = AttributeEncryptor::class)
     @Column(name = "refresh_token", columnDefinition = "TEXT")

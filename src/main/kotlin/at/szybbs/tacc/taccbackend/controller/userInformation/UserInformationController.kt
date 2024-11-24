@@ -64,7 +64,7 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
-    @PatchMapping("calendar-connections/inactive")
+    @PatchMapping("calendar-connections/deactivate")
     fun setActiveCalendarConnectionToNull(
         @PathVariable("user-information-id") userInformationId: UUID
     ) : ResponseEntity<UserInformationResponseDto> {
@@ -74,7 +74,7 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
-    @PatchMapping("tesla-connections/inactive")
+    @PatchMapping("tesla-connections/deactivate")
     fun setActiveTeslaConnectionToNull(
         @PathVariable("user-information-id") userInformationId: UUID
     ) : ResponseEntity<UserInformationResponseDto> {
