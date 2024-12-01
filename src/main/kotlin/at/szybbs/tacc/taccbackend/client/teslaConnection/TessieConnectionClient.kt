@@ -1,7 +1,7 @@
 package at.szybbs.tacc.taccbackend.client.teslaConnection
 
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
-import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
+import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaLocation
 import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
@@ -28,7 +28,6 @@ class TessieConnectionClient(
 
     private val vin: String by lazy { tessieConnectionService.getTeslaConnection(userId).vin.toString() }
     private val token: String by lazy { tessieConnectionService.getTeslaConnection(userId).accessToken.toString() }
-
 
     /**
      *  Wakes up the car with the given vin

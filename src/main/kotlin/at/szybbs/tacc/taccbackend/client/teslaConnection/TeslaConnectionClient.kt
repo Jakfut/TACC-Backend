@@ -1,7 +1,7 @@
 package at.szybbs.tacc.taccbackend.client.teslaConnection
 
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
-import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
+import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaLocation
 import java.util.UUID
 
 

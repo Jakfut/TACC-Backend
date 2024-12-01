@@ -4,7 +4,6 @@ import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
 import java.util.*
 
 
-// see flow diagram v0.2
 class AcRunnable(
     private val teslaConnectionFactory: TeslaConnectionFactory,
     private val userId: UUID,

@@ -20,7 +20,6 @@ class AcRunnableTests {
             Instant.now().plusSeconds(4)
         )
 
-
-        Thread.sleep(20000)
+        Thread.sleep(20000) // spring would end the test before the scheduled task is executed
     }
 }

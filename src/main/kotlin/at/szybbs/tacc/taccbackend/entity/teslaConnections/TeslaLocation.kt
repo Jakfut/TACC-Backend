@@ -1,16 +1,10 @@
-package at.szybbs.tacc.taccbackend.model.teslaConnection
-
-import com.fasterxml.jackson.annotation.JsonProperty
+package at.szybbs.tacc.taccbackend.entity.teslaConnections
 
 data class TeslaLocation(
-    val latitude: Double,
-    val longitude: Double,
     val address: String,
-    @JsonProperty("saved_location")
-    val savedLocation: String
 )   {
     override fun toString(): String {
-        return "latitude: $latitude \nlongitude: $longitude \naddress: $address \nsaved_location: $savedLocation"
+        return "\naddress: $address"
     }
 
     fun getDriveTime(tarLocation: TeslaLocation) : Double {

@@ -1,6 +1,6 @@
 package at.szybbs.tacc.taccbackend.runnable.locationRunnable
 
-import at.szybbs.tacc.taccbackend.model.teslaConnection.TeslaLocation
+import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaLocation
 import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler
 import java.time.Instant
 import java.time.LocalDateTime
