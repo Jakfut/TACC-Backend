@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: tacc-backend
+
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    show-sql: true         # Log SQL statements (disable in production)
+    hibernate:
+      ddl-auto: update    # Update database when necessary (set to "update" in production)
+    open-in-view: false   # Don't keep JPA session open for whole HTTP request
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            authorization-grant-type: authorization_code
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            scope: calendar.readonly
+        provider:
+          google:
+            issuer-uri: https://accounts.google.com
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+
+server:
+  port: 8080
