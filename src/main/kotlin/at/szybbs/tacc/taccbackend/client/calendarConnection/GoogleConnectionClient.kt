@@ -2,9 +2,8 @@ package at.szybbs.tacc.taccbackend.client.calendarConnection
 
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarEvent
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
-import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import org.springframework.context.annotation.Scope
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor
 import org.springframework.security.oauth2.client.web.client.RequestAttributeClientRegistrationIdResolver.clientRegistrationId
 import org.springframework.security.oauth2.client.web.client.RequestAttributePrincipalResolver.principal
@@ -13,18 +12,20 @@ import org.springframework.web.client.RestClient
 import org.springframework.web.client.toEntity
 import java.util.*
 
+
 @Component
 @Scope("prototype")
 class GoogleConnectionClient(
-    private val googleCalendarConnectionService: GoogleCalendarConnectionService,
-    authorizedClientManager: OAuth2AuthorizedClientManager
+    authorizedClientManager: AuthorizedClientServiceOAuth2AuthorizedClientManager
 ): CalendarConnectionClient {
     override lateinit var userId: UUID
 
     private val restClient = RestClient.builder()
         .baseUrl("https://www.googleapis.com/calendar/v3")
         .defaultHeaders { it.set("Content-Type", "application/json") }
-        .requestInterceptor(OAuth2ClientHttpRequestInterceptor(authorizedClientManager))
+        .requestInterceptor(OAuth2ClientHttpRequestInterceptor(authorizedClientManager).apply {
+            setPrincipalResolver(at.szybbs.tacc.taccbackend.client.TaccPrincipalResolver())
+        })
         .build()
 
     override fun getType(): CalendarType {
@@ -44,16 +45,44 @@ class GoogleConnectionClient(
             // TODO handle error
         }
 
-        println("CalendarList:" + result.body)
+        println("CalendarList: $result")
 
         return listOf()
     }
 
     override fun getEvents(calendarId: String): List<CalendarEvent> {
-        TODO("Not yet implemented")
+        val result = restClient.get()
+            .uri("/calendars/$calendarId/events")
+            .attributes(clientRegistrationId("google"))
+            .attributes(principal(userId.toString()))
+            .retrieve()
+            .toEntity<List<CalendarEvent>>()
+
+        if (result.statusCode.is4xxClientError) {
+            throw Exception("Unauthorized")
+            // TODO handle error
+        }
+
+        println("CalendarEvents: $result")
+
+        return listOf()
     }
 
     override fun getEventWithKeyword(calendarId: String, keyword: String): List<CalendarEvent> {
-        TODO("Not yet implemented")
+        val result = restClient.get()
+            .uri("/calendars/$calendarId/events?q=$keyword")
+            .attributes(clientRegistrationId("google"))
+            .attributes(principal(userId.toString()))
+            .retrieve()
+            .toEntity<List<CalendarEvent>>()
+
+        if (result.statusCode.is4xxClientError) {
+            throw Exception("Unauthorized")
+            // TODO handle error
+        }
+
+        println("CalendarEvents: $result")
+
+        return listOf()
     }
 }
