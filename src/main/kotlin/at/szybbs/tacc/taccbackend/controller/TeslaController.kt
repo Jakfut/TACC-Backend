@@ -19,7 +19,7 @@ class TeslaController {
     fun teslaIsReachable(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<Boolean> {
-        // TODO: update and call http-client
+        // TODO: call http-client
 
         return ResponseEntity.ok(false)
     }
@@ -28,7 +28,7 @@ class TeslaController {
     fun teslaLocation(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<String> {
-        // TODO: update and call http-client
+        // TODO: call http-client
 
         return ResponseEntity.ok("Address")
     }
@@ -37,7 +37,7 @@ class TeslaController {
     fun teslaClimateIsActive(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<Boolean> {
-        // TODO: update and call http-client
+        // TODO: call http-client
 
         return ResponseEntity.ok(false)
     }
@@ -47,7 +47,7 @@ class TeslaController {
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody state: Boolean
     ): ResponseEntity<Boolean> {
-        // TODO: update and call http-client
+        // TODO: call http-client
 
         return ResponseEntity.ok(state)
     }
@@ -56,7 +56,7 @@ class TeslaController {
     fun upcomingActivations(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<List<TeslaClimateActivationResponseDto>> {
-        // TODO: update and call http-client
+        // TODO: call http-client
 
         val list = arrayListOf(
             TeslaClimateActivationResponseDto(

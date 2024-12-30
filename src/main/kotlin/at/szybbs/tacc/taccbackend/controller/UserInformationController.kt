@@ -87,7 +87,7 @@ class UserInformationController (
     fun setActiveCalendarConnectionToNull(
         @PathVariable("user-information-id") userInformationId: UUID
     ) : ResponseEntity<UserInformationResponseDto> {
-        val responseDto = userInformationService.setActiveCalendarConnectionType(userInformationId, null)
+        val responseDto = userInformationService.setActiveCalendarConnectionTypeToNull(userInformationId)
             ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
@@ -97,7 +97,7 @@ class UserInformationController (
     fun setActiveTeslaConnectionToNull(
         @PathVariable("user-information-id") userInformationId: UUID
     ) : ResponseEntity<UserInformationResponseDto> {
-        val responseDto = userInformationService.setActiveTeslaConnectionType(userInformationId, null)
+        val responseDto = userInformationService.setActiveTeslaConnectionTypeToNull(userInformationId)
             ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)

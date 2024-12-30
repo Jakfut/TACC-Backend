@@ -63,14 +63,23 @@ class GoogleCalendarConnectionService (
 
         val updatedCalendarConnection = googleCalendarConnectionRepository.save(calendarConnection)
 
-        // TODO: call/update http-Client
+        if (calendarTypeIsCurrentlyActive(userInformationId)) {
+            // TODO: call/update http-Client, if active?
+        }
 
         return updatedCalendarConnection
     }
 
-    @Throws(CalendarConnectionNotFoundException::class)
+    @Throws(
+        CalendarConnectionNotFoundException::class,
+        UserInformationNotFoundException::class,
+    )
     fun deleteCalendarConnection(userInformationId: UUID) {
         val googleCalendarConnection = getCalendarConnection(userInformationId)
+
+        if (calendarTypeIsCurrentlyActive(userInformationId)) {
+            userInformationService.setActiveCalendarConnectionTypeToNull(userInformationId)
+        }
 
         googleCalendarConnectionRepository.delete(googleCalendarConnection)
     }
@@ -80,17 +89,14 @@ class GoogleCalendarConnectionService (
         CalendarConnectionNotFoundException::class,
     )
     fun setCalendarConnectionToActive(userInformationId: UUID): UserInformation? {
-        if (!calendarConnectionExists(userInformationId))
-            throw CalendarConnectionNotFoundException(CalendarType.GOOGLE_CALENDAR, userInformationId)
-
-        return userInformationService.setActiveCalendarConnectionType(userInformationId, CalendarType.GOOGLE_CALENDAR)
+        return userInformationService.setActiveCalendarConnectionType(userInformationId, CalendarType.GOOGLE_CALENDAR, googleCalendarConnectionRepository)
     }
 
     @Throws(
         CalendarConnectionNotFoundException::class,
     )
     fun authorizeByAuthorizationCode(userInformationId: UUID, authorizationCode: String): GoogleCalendarConnection? {
-        // TODO: change implementation based in implementation of http-client
+        // TODO: change implementation based on implementation of http-client
 
         val calendarConnection = getCalendarConnection(userInformationId)
 
@@ -120,12 +126,23 @@ class GoogleCalendarConnectionService (
 
         val updatedUserInformation = googleCalendarConnectionRepository.save(calendarConnection)
 
-        // TODO: call/update http-Client
+        if (calendarTypeIsCurrentlyActive(userInformationId)) {
+            // TODO: call/update http-Client, if active?
+        }
 
         return updatedUserInformation
     }
 
     fun calendarConnectionExists(userInformationId: UUID): Boolean {
         return googleCalendarConnectionRepository.findById(userInformationId).isPresent
+    }
+
+    @Throws(
+        CalendarConnectionNotFoundException::class
+    )
+    fun calendarTypeIsCurrentlyActive(userInformationId: UUID): Boolean {
+        val userInformation = userInformationService.getUserInformation(userInformationId)
+
+        return userInformation.activeCalendarConnectionType == CalendarType.GOOGLE_CALENDAR
     }
 }
