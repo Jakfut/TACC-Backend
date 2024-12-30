@@ -5,6 +5,9 @@ import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationUpdateDefaultValuesDto
 import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -31,19 +34,35 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
+    // @PreAuthorize("hasRole('ADMIN...')") -> TODO: only allow admin/service account, implementing automatic creation
     @PostMapping
     fun createUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID,
-        @RequestBody creationDto: UserInformationCreationDto?
+        @RequestBody creationDto: UserInformationCreationDto?,
+        authentication: Authentication?
     ) : ResponseEntity<UserInformationResponseDto> {
-        val responseDto = userInformationService.createUserInformation(userInformationId, creationDto, "email@email.com")
-            .toResponseDto()
 
-        // TODO: replace jwtEmail
+        var email : String? = null
+
+        if (authentication is JwtAuthenticationToken) {
+            email = authentication.tokenAttributes["email"]?.toString()
+        }
+        else {
+            email = "testMail@mail.com" // TODO: remove later in production
+        }
+
+        if (email == null) return ResponseEntity.badRequest().body(null) // TODO: make authentication NOT NULLABLE
+
+        val responseDto = userInformationService.createUserInformation(
+            userInformationId,
+            creationDto,
+            email
+        ).toResponseDto()
 
         return ResponseEntity.ok(responseDto)
     }
 
+    // @PreAuthorize("hasRole('ADMIN...')") -> TODO: only allow admin/service account, implementing automatic deletion
     @DeleteMapping
     fun deleteUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID

@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: tacc-backend
+
+  datasource:
+    # Database config
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+
+  jpa:
+    # log SQL-statements TODO: disable in production
+    show-sql: true
+
+    hibernate:
+      # Update database when necessary TODO: set to "update" in production
+      ddl-auto: create-drop
+
+    # don't keep JPA session opened for whole HTTP request
+    open-in-view: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI}
+
+server:
+  port: 8088
+
+# for encrypting columns
+encryption:
+  attribute:
+    password: ${ATTRIBUTE_ENCRYPTION_PASSWORD}
+    salt: ${ATTRIBUTE_ENCRYPTION_SALT}
