@@ -48,7 +48,7 @@ class TessieConnectionClient(
             logger.warn("Failed to wake up car with vin: $vin, Body: ${result.body}")
         }
 
-        println("Wake:" + result.body)
+        logger.info("Woke up car with vin: $vin")
 
         return result.statusCode.is2xxSuccessful
     }
@@ -113,6 +113,8 @@ class TessieConnectionClient(
         if (!result.statusCode.is2xxSuccessful) {
             logger.warn("Failed to change AC state of car with vin: $vin, Body: ${result.body}")
         }
+
+        logger.info("Changed AC state of car with vin: $vin to $state")
 
         return result.statusCode.is2xxSuccessful
     }

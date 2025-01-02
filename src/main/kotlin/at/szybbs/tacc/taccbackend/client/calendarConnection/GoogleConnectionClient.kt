@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.client.web.client.RequestAttributeCli
 import org.springframework.security.oauth2.client.web.client.RequestAttributePrincipalResolver.principal
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
-import org.springframework.web.client.toEntity
 import java.util.*
 
 
