@@ -17,8 +17,8 @@ class GoogleClientTests {
         UUID.fromString(userId)) }
 
     @Test
-    fun getCalendarList() {
-        val result = calendarConnectionClient.getCalendarList()
+    fun getCalendarIdList() {
+        val result = calendarConnectionClient.getCalendarIdList()
 
         println("CalendarList: $result")
 

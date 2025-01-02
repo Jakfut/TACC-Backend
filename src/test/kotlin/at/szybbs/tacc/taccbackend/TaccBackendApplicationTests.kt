@@ -35,12 +35,12 @@ class TaccBackendApplicationTests {
 
 		val accessToken = OAuth2AccessToken(
 			OAuth2AccessToken.TokenType.BEARER,
-			"?",
+			"ya29.a0ARW5m74PS5ztGdvmls_adeRbGlIYtCVqKj71Se2HQg5_SUqs1gbT7EChKwHxEmkuJPAXxAAhOL6xvsi9fwa06aBGBTT8tlmAO1_2u4fzimHPGuVpJ2Wp0ZxunHEcyqpRBZo7aEMRwmpEmMcwSymtykYhKdBsplA4BZHdiceqaCgYKASESARASFQHGX2MiihEv3fGOwOK6KOjrCX9YNQ0175",
 			Instant.now(),
 			Instant.now().plusSeconds(3000)
 		)
 		val refreshToken = OAuth2RefreshToken(
-			"?",
+			"1//04YT-S7pjRZ1FCgYIARAAGAQSNwF-L9IrbOu-F5jhdRgVRWUaiKjdMLt69XGD08spDDsZSarbTjSGxo7fE59R8nidTDZWScbOke4",
 			Instant.now()
 		)
 
