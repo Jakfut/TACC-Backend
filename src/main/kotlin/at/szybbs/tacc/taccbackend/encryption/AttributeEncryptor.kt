@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Value
 @Converter
 class AttributeEncryptor : AttributeConverter<String, String> {
 
-    @Value("\${encryption.attribute.password}") private lateinit var password : String
-    @Value("\${encryption.attribute.salt}") private lateinit var salt : String
+    @Value("\${security.encryption.attribute.password}") private lateinit var password : String
+    @Value("\${security.encryption.attribute.salt}") private lateinit var salt : String
 
     private lateinit var encryptor: AesCbcEncryptor
 

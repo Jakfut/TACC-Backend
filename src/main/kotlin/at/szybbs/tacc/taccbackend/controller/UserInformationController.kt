@@ -34,35 +34,22 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
-    // @PreAuthorize("hasRole('ADMIN...')") -> TODO: only allow admin/service account, implementing automatic creation
+    @PreAuthorize("@userSecurity.hasCreateUserRole()")
     @PostMapping
     fun createUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID,
-        @RequestBody creationDto: UserInformationCreationDto?,
-        authentication: Authentication?
+        @RequestBody creationDto: UserInformationCreationDto
     ) : ResponseEntity<UserInformationResponseDto> {
-
-        var email : String? = null
-
-        if (authentication is JwtAuthenticationToken) {
-            email = authentication.tokenAttributes["email"]?.toString()
-        }
-        else {
-            email = "testMail@mail.com" // TODO: remove later in production
-        }
-
-        if (email == null) return ResponseEntity.badRequest().body(null) // TODO: make authentication NOT NULLABLE
 
         val responseDto = userInformationService.createUserInformation(
             userInformationId,
-            creationDto,
-            email
+            creationDto
         ).toResponseDto()
 
         return ResponseEntity.ok(responseDto)
     }
 
-    // @PreAuthorize("hasRole('ADMIN...')") -> TODO: only allow admin/service account, implementing automatic deletion
+    // TODO: allow user itself do delete account -> call keycloak to also delete
     @DeleteMapping
     fun deleteUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID

@@ -33,23 +33,13 @@ class UserInformationService (
         UserInformationAlreadyExistsException::class,
         UserInformationValidationException::class,
     )
-    fun createUserInformation(userInformationId: UUID, creationDto: UserInformationCreationDto?, jwtEmail: String) : UserInformation {
+    fun createUserInformation(userInformationId: UUID, creationDto: UserInformationCreationDto) : UserInformation {
         if (userInformationExists(userInformationId)) throw UserInformationAlreadyExistsException(userInformationId)
 
-        val newUserInformation = if (creationDto != null) {
-            UserInformation(
-                id = userInformationId,
-                email = jwtEmail,
-                noDestMinutes = creationDto.noDestMinutes,
-                ccRuntimeMinutes = creationDto.ccRuntimeMinutes,
-                arrivalBufferMinutes = creationDto.arrivalBufferMinutes,
-            )
-        } else {
-            UserInformation(
-                id = userInformationId,
-                email = jwtEmail,
-            )
-        }
+        val newUserInformation = UserInformation(
+            id = userInformationId,
+            email = creationDto.email
+        )
 
         return userInformationRepository.save(newUserInformation)
     }

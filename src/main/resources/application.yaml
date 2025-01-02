@@ -29,7 +29,12 @@ server:
   port: 8088
 
 # for encrypting columns
-encryption:
-  attribute:
-    password: ${ATTRIBUTE_ENCRYPTION_PASSWORD}
-    salt: ${ATTRIBUTE_ENCRYPTION_SALT}
+security:
+  encryption:
+    attribute:
+      password: ${ATTRIBUTE_ENCRYPTION_PASSWORD}
+      salt: ${ATTRIBUTE_ENCRYPTION_SALT}
+
+  authentication:
+    roles:
+      create: ${CREATE_ROLE}
