@@ -1,6 +1,5 @@
 package at.szybbs.tacc.taccbackend.runnable.locationRunnable
 
-import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaLocation
 import org.springframework.scheduling.concurrent.SimpleAsyncTaskScheduler
 import java.time.Instant
 import java.time.LocalDateTime
@@ -10,8 +9,8 @@ import java.time.ZoneId
 class LocationRunnable(
     private val eventTime: LocalDateTime,
     private val vin: String,
-    private val curLocation: TeslaLocation,
-    private val tarLocation: TeslaLocation
+    private val curLocation: String,
+    private val tarLocation: String
 ) : Runnable {
     override fun run() {
         // TODO implement

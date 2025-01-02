@@ -1,8 +1,9 @@
 package at.szybbs.tacc.taccbackend.client.teslaConnection
 
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
-import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaLocation
 import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
@@ -16,6 +17,8 @@ class TessieConnectionClient(
     private val tessieConnectionService: TessieConnectionService
 ): TeslaConnectionClient {
     override lateinit var userId: UUID
+
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
     private val restClient = RestClient.builder()
         .baseUrl("https://api.tessie.com")
@@ -42,8 +45,7 @@ class TessieConnectionClient(
             .toEntity<String>()
 
         if (result.statusCode.is4xxClientError) {
-            throw Exception("Unauthorized")
-            // TODO handle error
+            logger.warn("Failed to wake up car with vin: $vin, Body: ${result.body}")
         }
 
         println("Wake:" + result.body)
@@ -56,21 +58,19 @@ class TessieConnectionClient(
      *  @return the location of the car
      */
 
-    override fun getLocation() : TeslaLocation {
+    override fun getLocation() : String {
         val result = restClient.get()
             .uri("/{vin}/location", vin)
             .header("Authorization", "Bearer: $token")
             .retrieve()
-            .toEntity<TeslaLocation>()
+            .toEntity(Map::class.java)
 
         if (!result.statusCode.is2xxSuccessful) {
-            throw Exception("Failed to get location")
-            // TODO handle error
+            logger.warn("Failed to get address of car with vin: $vin, Body: ${result.body}")
         }
 
-        println(result.body)
-
-        return result.body ?: throw Exception("Failed to get location")
+        // Safely extract the "address" value from the Map
+        return result.body?.get("address") as? String ?: throw Exception("Failed to get location")
     }
 
     /**
@@ -86,16 +86,11 @@ class TessieConnectionClient(
             .toEntity(Map::class.java)
 
         if (!result.statusCode.is2xxSuccessful) {
-            throw Exception("Failed to get status")
-            // TODO handle error
+            logger.warn("Failed to get status of car with vin: $vin, Body: ${result.body}")
         }
 
         // Safely extract the "status" value from the Map
-        val status = result.body?.get("status") as? String ?: throw Exception("Status not found")
-
-        println("Status: $status")
-
-        return status
+        return result.body?.get("status") as? String ?: throw Exception("Failed to get status")
     }
 
     /**
@@ -116,12 +111,8 @@ class TessieConnectionClient(
             .toEntity<String>()
 
         if (!result.statusCode.is2xxSuccessful) {
-            println(result.body)
-            throw Exception("Failed to change ac state")
-            // TODO handle error
+            logger.warn("Failed to change AC state of car with vin: $vin, Body: ${result.body}")
         }
-
-        println("AC State: $state")
 
         return result.statusCode.is2xxSuccessful
     }

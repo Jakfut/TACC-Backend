@@ -2,9 +2,11 @@ package at.szybbs.tacc.taccbackend.client.calendarConnection
 
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarEvent
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
-import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.CalendarListResponse
+import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarListResponse
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarEventsResponse
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.mapGoogleToCalendarEvent
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor
@@ -23,6 +25,8 @@ class GoogleConnectionClient(
 ): CalendarConnectionClient {
     override lateinit var userId: UUID
 
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
+
     private val restClient = RestClient.builder()
         .baseUrl("https://www.googleapis.com/calendar/v3")
         .defaultHeaders { it.set("Content-Type", "application/json") }
@@ -40,17 +44,16 @@ class GoogleConnectionClient(
             .uri("/users/me/calendarList")
             .attributes(clientRegistrationId("google"))
             .attributes(principal(userId.toString()))
-            .retrieve()
-            .toEntity<CalendarListResponse>()
+            .exchange{ _, response ->
+                if (response.statusCode.is2xxSuccessful) {
+                    response.bodyTo(GoogleCalendarListResponse::class.java)
+                } else {
+                    logger.warn("Failed to retrieve calendar list for user $userId: Status code: ${response.statusCode}, Body: ${response.body}")
+                    null
+                }
+            }
 
-        if (result.statusCode.is4xxClientError) {
-            throw Exception("Unauthorized")
-            // TODO handle error
-        }
-
-        val calendarListResponse: CalendarListResponse? = result.body
-
-        return calendarListResponse?.items?.map { it.id } ?: emptyList()
+        return result?.items?.map { it.id } ?: emptyList()
     }
 
     override fun getEvents(calendarId: String): List<CalendarEvent> {
@@ -58,21 +61,16 @@ class GoogleConnectionClient(
             .uri("/calendars/$calendarId/events")
             .attributes(clientRegistrationId("google"))
             .attributes(principal(userId.toString()))
-            .retrieve()
-            .toEntity<GoogleCalendarEventsResponse>()
+            .exchange{ _, response ->
+                if (response.statusCode.is2xxSuccessful) {
+                    response.bodyTo(GoogleCalendarEventsResponse::class.java)
+                } else {
+                    logger.warn("Failed to retrieve events for calendar $calendarId for user $userId: Status code: ${response.statusCode}, Body: ${response.body}")
+                    null
+                }
+            }
 
-        if (result.statusCode.is4xxClientError) {
-            throw Exception("Unauthorized")
-            // TODO handle error
-        }
-
-        val calendarEventsResponse: GoogleCalendarEventsResponse? = result.body
-
-        if (calendarEventsResponse != null) {
-            val calendarEvents: List<CalendarEvent> = calendarEventsResponse.items.map { mapGoogleToCalendarEvent(it) }
-            return calendarEvents
-        }
-        return emptyList()
+        return result?.items?.map { mapGoogleToCalendarEvent(it) } ?: emptyList()
     }
 
     override fun getEventWithKeyword(calendarId: String, keyword: String): List<CalendarEvent> {
@@ -80,21 +78,15 @@ class GoogleConnectionClient(
             .uri("/calendars/$calendarId/events?q=$keyword")
             .attributes(clientRegistrationId("google"))
             .attributes(principal(userId.toString()))
-            .retrieve()
-            .toEntity<GoogleCalendarEventsResponse>()
+            .exchange{ _, response ->
+                if (response.statusCode.is2xxSuccessful) {
+                    response.bodyTo(GoogleCalendarEventsResponse::class.java)
+                } else {
+                    logger.warn("Failed to retrieve events for calendar $calendarId for user $userId: Status code: ${response.statusCode}, Body: ${response.body}")
+                    null
+                }
+            }
 
-        if (result.statusCode.is4xxClientError) {
-            throw Exception("Unauthorized")
-            // TODO handle error
-        }
-
-        val calendarEventsResponse: GoogleCalendarEventsResponse? = result.body
-
-        if (calendarEventsResponse != null) {
-            val calendarEvents: List<CalendarEvent> = calendarEventsResponse.items.map { mapGoogleToCalendarEvent(it) }
-            return calendarEvents
-        }
-
-        return emptyList()
+        return result?.items?.map { mapGoogleToCalendarEvent(it) } ?: emptyList()
     }
 }

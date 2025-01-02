@@ -1,9 +1,9 @@
 package at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar
 
-data class CalendarListEntry(
+data class GoogleCalendarListEntry(
     val id: String
 )
 
-data class CalendarListResponse(
-    val items: List<CalendarListEntry>
+data class GoogleCalendarListResponse(
+    val items: List<GoogleCalendarListEntry>
 )
