@@ -28,13 +28,24 @@ spring:
 server:
   port: 8088
 
-# for encrypting columns
+
+# custom config
 security:
   encryption:
     attribute:
+      # for encrypting columns
       password: ${ATTRIBUTE_ENCRYPTION_PASSWORD}
       salt: ${ATTRIBUTE_ENCRYPTION_SALT}
 
   authentication:
     roles:
-      create: ${CREATE_ROLE}
+      # for user registration sync with keycloak
+      create: ${KEYCLOAK_SYN_CREATE_ROLE}
+
+  keycloak:
+    # for user deletion sync with keycloak
+    admin-api:
+      server-url: ${KEYCLOAK_ADMIN_API_URL}
+      realm: ${KEYCLOAK_ADMIN_API_REALM}
+      client-id: ${KEYCLOAK_ADMIN_API_CLIENT_ID}
+      client-secret: ${KEYCLOAK_ADMIN_API_CLIENT_SECRET}

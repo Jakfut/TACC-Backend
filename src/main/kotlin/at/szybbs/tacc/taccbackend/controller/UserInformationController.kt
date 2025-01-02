@@ -49,7 +49,6 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
-    // TODO: allow user itself do delete account -> call keycloak to also delete
     @DeleteMapping
     fun deleteUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID

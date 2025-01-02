@@ -15,6 +15,6 @@ import org.springframework.stereotype.Component
 @Component
 class TessieConnectionValidator {
     fun validate(tessieConnection: TessieConnection) {
-
+        // TODO: ping Tesla using http client
     }
 }

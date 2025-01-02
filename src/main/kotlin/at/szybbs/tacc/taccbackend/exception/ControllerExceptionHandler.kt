@@ -37,6 +37,7 @@ class ControllerExceptionHandler {
         CalendarConnectionAlreadyExistsException::class,
         TeslaConnectionAlreadyExistsException::class,
         UserInformationAlreadyExistsException::class,
+        UserInformationKeycloakDeletionSynchronizationException::class
     )
     fun handleConflictExceptions(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.CONFLICT)

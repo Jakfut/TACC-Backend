@@ -11,6 +11,7 @@ import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnectionNotFoundException
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionNotFoundException
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationAlreadyExistsException
+import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationKeycloakDeletionSynchronizationException
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationNotFoundException
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationValidationException
 import at.szybbs.tacc.taccbackend.repository.UserInformationRepository
@@ -20,7 +21,8 @@ import java.util.*
 
 @Service
 class UserInformationService (
-    private val userInformationRepository: UserInformationRepository
+    private val userInformationRepository: UserInformationRepository,
+    private val keycloakAdminApiService: KeycloakAdminApiService
 ) {
 
     @Throws(UserInformationNotFoundException::class)
@@ -44,11 +46,19 @@ class UserInformationService (
         return userInformationRepository.save(newUserInformation)
     }
 
-    @Throws(UserInformationNotFoundException::class)
+    @Throws(
+        UserInformationNotFoundException::class,
+        UserInformationKeycloakDeletionSynchronizationException::class,
+    )
     fun deleteUserInformation(userInformationId: UUID) {
         val userInformation = getUserInformation(userInformationId)
 
-        userInformationRepository.delete(userInformation)
+        val synSuccessful = keycloakAdminApiService.userRemovedById(userInformationId)
+
+        if (!synSuccessful)
+            throw UserInformationKeycloakDeletionSynchronizationException(userInformationId)
+
+        userInformationRepository.deleteById(userInformationId)
     }
 
     @Throws(
