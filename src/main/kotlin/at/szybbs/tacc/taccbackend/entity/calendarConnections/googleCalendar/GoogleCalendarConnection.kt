@@ -34,8 +34,8 @@ data class GoogleCalendarConnection(
     @Column(name = "email")
     var email: String? = null,
 
-    @Column(name = "keyword")
-    var keyword: String? = null,
+    @Column(name = "keyword", nullable = false)
+    var keyword: String,
 ) : CalendarConnection {
     override fun toResponseDto(): GoogleCalendarConnectionResponseDto {
         return GoogleCalendarConnectionResponseDto(
