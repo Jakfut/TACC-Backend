@@ -32,4 +32,13 @@ class TaccDirectionsTests {
 
         assert(result > 25)
     }
+
+    @Test
+    fun testGetDriveTimeFromCurrentLocation() {
+        val to = "Ybbs an der Donau, Österreich"
+        val result = taccDirections.getDriveTimeFromCurrentLocationWithVariables(to, userId)
+        println("Drive time from current location to $to: $result minutes")
+
+        assert(result > 1)
+    }
 }

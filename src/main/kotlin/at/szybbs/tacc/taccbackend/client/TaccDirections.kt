@@ -1,5 +1,6 @@
 package at.szybbs.tacc.taccbackend.client
 
+import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
 import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
@@ -9,7 +10,8 @@ import java.util.UUID
 
 @Component
 class TaccDirections(
-    private val userInformationService: UserInformationService
+    private val userInformationService: UserInformationService,
+    private val teslaConnectionFactory: TeslaConnectionFactory
 ) {
     @Value("\${google.maps.api.key}")
     private val key = ""
@@ -62,6 +64,25 @@ class TaccDirections(
         }
 
         return driveTime + userInformationService.getUserInformation(userId).arrivalBufferMinutes
+    }
+
+    /**
+     *  Get the drive time in minutes from the user's current location to another location
+     *  @param to The destination location
+     *  @param userId The user's ID
+     *  @return The drive time in minutes or -1 if the request failed
+     */
+
+    fun getDriveTimeFromCurrentLocationWithVariables(to: String, userId: UUID): Int {
+        val userInformation = userInformationService.getUserInformation(userId)
+
+        val teslaConnectionClient = teslaConnectionFactory.createTeslaConnectionClient(
+            userId
+        )
+
+        val currentLocation = teslaConnectionClient.getLocation()
+
+        return getDriveTimeWithVariables(currentLocation, to, userId)
     }
 
     private data class DirectionsResponse(
