@@ -1,12 +1,16 @@
 package at.szybbs.tacc.taccbackend.client
 
+import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
+import java.util.UUID
 
 @Component
-class TaccDirections {
+class TaccDirections(
+    private val userInformationService: UserInformationService
+) {
     @Value("\${google.maps.api.key}")
     private val key = ""
 
@@ -40,6 +44,24 @@ class TaccDirections {
         logger.error("Failed to retrieve directions from $from to $to")
 
         return -1
+    }
+
+    /**
+     *  Get the drive time in minutes from one location to another with the user's arrival buffer
+     *  @param from The starting location
+     *  @param to The destination location
+     *  @param userId The user's ID
+     *  @return The drive time in minutes or -1 if the request failed
+     */
+
+    fun getDriveTimeWithVariables(from: String, to: String, userId: UUID): Int {
+        val driveTime = getDriveTimeMinutes(from, to)
+
+        if (driveTime == -1) {
+            return -1
+        }
+
+        return driveTime + userInformationService.getUserInformation(userId).arrivalBufferMinutes
     }
 
     private data class DirectionsResponse(
