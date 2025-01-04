@@ -3,6 +3,7 @@ package at.szybbs.tacc.taccbackend
 import at.szybbs.tacc.taccbackend.factory.CalendarConnectionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.time.Instant
 import java.util.*
 import kotlin.test.Test
 
@@ -27,7 +28,10 @@ class GoogleClientTests {
 
     @Test
     fun getCalendarEvents() {
-        val result = calendarConnectionClient.getEvents("c77cff268c26de890ebec385cf0a28ecebadec6a39d8d526873af6cefb57d590@group.calendar.google.com")
+        val result = calendarConnectionClient.getEvents(
+            "c77cff268c26de890ebec385cf0a28ecebadec6a39d8d526873af6cefb57d590@group.calendar.google.com",
+            Instant.now().minusSeconds(60 * 60 * 24 * 365),
+        )
 
         println("CalendarEvents: $result")
 
@@ -38,7 +42,7 @@ class GoogleClientTests {
     fun getCalendarEventsKeyword() {
         val result = calendarConnectionClient.getEventWithKeyword(
             "c77cff268c26de890ebec385cf0a28ecebadec6a39d8d526873af6cefb57d590@group.calendar.google.com",
-            "TestWord"
+            Instant.now().minusSeconds(60 * 60 * 24 * 365)
         )
 
         println("CalendarEvents: $result")
@@ -46,4 +50,14 @@ class GoogleClientTests {
         assert(result.isNotEmpty())
     }
 
+    @Test
+    fun getAllCalendarEventsKeyword() {
+        val result = calendarConnectionClient.getAllEventsWithKeyword(
+            Instant.now().minusSeconds(60 * 60 * 24 * 365)
+        )
+
+        println("CalendarEvents: $result")
+
+        assert(result.isNotEmpty())
+    }
 }

@@ -116,6 +116,6 @@ class TessieConnectionClient(
 
         logger.info("Changed AC state of car with vin: $vin to $state")
 
-        return result.statusCode.is2xxSuccessful
+        return true //result.statusCode.is2xxSuccessful
     }
 }

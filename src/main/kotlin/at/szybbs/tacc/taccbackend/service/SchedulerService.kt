@@ -19,7 +19,7 @@ class SchedulerService(
     }
 
     fun scheduleLocation(userId: UUID, targetState: Boolean, eventTime: Instant, tarLocation: String, instant: Instant) {
-        val task = LocationRunnable(userId, targetState, eventTime, tarLocation)
+        val task = LocationRunnable(userId, targetState, eventTime, tarLocation, applicationContext)
         SimpleAsyncTaskScheduler().schedule(task, instant)
     }
 }

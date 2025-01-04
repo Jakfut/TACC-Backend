@@ -74,8 +74,6 @@ class TaccDirections(
      */
 
     fun getDriveTimeFromCurrentLocationWithVariables(to: String, userId: UUID): Int {
-        val userInformation = userInformationService.getUserInformation(userId)
-
         val teslaConnectionClient = teslaConnectionFactory.createTeslaConnectionClient(
             userId
         )

@@ -5,6 +5,7 @@ import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarListResponse
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarEventsResponse
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.mapGoogleToCalendarEvent
+import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
@@ -14,15 +15,19 @@ import org.springframework.security.oauth2.client.web.client.RequestAttributeCli
 import org.springframework.security.oauth2.client.web.client.RequestAttributePrincipalResolver.principal
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
+import java.time.Instant
 import java.util.*
 
 
 @Component
 @Scope("prototype")
 class GoogleConnectionClient(
-    authorizedClientManager: AuthorizedClientServiceOAuth2AuthorizedClientManager
+    authorizedClientManager: AuthorizedClientServiceOAuth2AuthorizedClientManager,
+    googleCalendarConnectionService: GoogleCalendarConnectionService
 ): CalendarConnectionClient {
     override lateinit var userId: UUID
+
+    private val keyword: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).keyword }
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -55,9 +60,9 @@ class GoogleConnectionClient(
         return result?.items?.map { it.id } ?: emptyList()
     }
 
-    override fun getEvents(calendarId: String): List<CalendarEvent> {
+    override fun getEvents(calendarId: String, timeMin: Instant): List<CalendarEvent> {
         val result = restClient.get()
-            .uri("/calendars/$calendarId/events")
+            .uri("/calendars/$calendarId/events?timeMin=${timeMin}")
             .attributes(clientRegistrationId("google"))
             .attributes(principal(userId.toString()))
             .exchange{ _, response ->
@@ -72,9 +77,9 @@ class GoogleConnectionClient(
         return result?.items?.map { mapGoogleToCalendarEvent(it) } ?: emptyList()
     }
 
-    override fun getEventWithKeyword(calendarId: String, keyword: String): List<CalendarEvent> {
+    override fun getEventWithKeyword(calendarId: String, timeMin: Instant): List<CalendarEvent> {
         val result = restClient.get()
-            .uri("/calendars/$calendarId/events?q=$keyword")
+            .uri("/calendars/$calendarId/events?q=$keyword&timeMin=${timeMin}")
             .attributes(clientRegistrationId("google"))
             .attributes(principal(userId.toString()))
             .exchange{ _, response ->
@@ -87,5 +92,10 @@ class GoogleConnectionClient(
             }
 
         return result?.items?.map { mapGoogleToCalendarEvent(it) } ?: emptyList()
+    }
+
+    override fun getAllEventsWithKeyword(timeMin: Instant): List<CalendarEvent> {
+        val calendarIdList = getCalendarIdList()
+        return calendarIdList.flatMap { getEventWithKeyword(it, timeMin) }
     }
 }

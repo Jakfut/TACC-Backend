@@ -17,11 +17,11 @@ class LocationRunnableTests {
         schedulerService.scheduleLocation(
             UUID.fromString("409cd7c7-e82d-406c-a784-621598ff45e9"),
             true,
-            Instant.now().plusSeconds(4),
-            "tarLocation",
+            Instant.now().plusSeconds(60 * 60), // the event is in one hour
+            "Ybbs an der Donau, Österreich",
             Instant.now().plusSeconds(4)
         )
 
-        Thread.sleep(20000) // spring would end the test before the scheduled task is executed
+        Thread.sleep(1000 * 60 * 60) // spring would end the test before the scheduled task is executed
     }
 }

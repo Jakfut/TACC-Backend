@@ -5,7 +5,7 @@ import java.time.Instant
 
 data class CalendarEvent(
     val description: String,
-    val location: String,
+    val location: String?,
     val start: Instant,
     val end: Instant
 )

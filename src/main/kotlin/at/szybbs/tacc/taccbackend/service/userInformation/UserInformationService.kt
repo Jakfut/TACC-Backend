@@ -18,6 +18,10 @@ class UserInformationService (
     private val userInformationRepository: UserInformationRepository
 ) {
 
+    fun getUserInformation() : List<UserInformation> {
+        return userInformationRepository.findAll()
+    }
+
     @Throws(UserInformationNotFoundException::class)
     fun getUserInformation(userInformationId: UUID) : UserInformation {
         return userInformationRepository.findById(userInformationId)
