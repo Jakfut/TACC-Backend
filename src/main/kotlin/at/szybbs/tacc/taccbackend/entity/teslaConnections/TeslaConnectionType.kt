@@ -9,4 +9,5 @@ package at.szybbs.tacc.taccbackend.entity.teslaConnections
  */
 enum class TeslaConnectionType {
     TESSIE,
+    MOCK,
 }
