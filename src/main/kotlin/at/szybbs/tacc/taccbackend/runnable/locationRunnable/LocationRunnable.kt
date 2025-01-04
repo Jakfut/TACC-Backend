@@ -3,9 +3,11 @@ package at.szybbs.tacc.taccbackend.runnable.locationRunnable
 import at.szybbs.tacc.taccbackend.client.TaccDirections
 import at.szybbs.tacc.taccbackend.service.SchedulerService
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationContext
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 // see flow diagram v0.2
 class LocationRunnable(
@@ -13,7 +15,8 @@ class LocationRunnable(
     private val targetState: Boolean,
     private val eventTime: Instant,
     private val tarLocation: String,
-    private val applicationContext: ApplicationContext
+    private val applicationContext: ApplicationContext,
+    private val timeUnit: String
 ) : Runnable {
     override fun run(
     ) {
@@ -23,20 +26,24 @@ class LocationRunnable(
 
         val driveTime = taccDirections.getDriveTimeFromCurrentLocationWithVariables(tarLocation, userId)
 
-        val timeDifference = (eventTime.toEpochMilli() - Instant.now().toEpochMilli() - driveTime * 60000) / 60000
+        val multiplier = if (timeUnit == "seconds") 1 else 60
+
+        val timeDifference = (eventTime.toEpochMilli() - Instant.now().toEpochMilli() - driveTime * 1000 * multiplier) / (1000 * multiplier)
+
+        println(timeDifference)
 
         when (timeDifference) {
             in 0..15 -> {
                 logger.info("Inserted into AcRunnable with timeDifference: $timeDifference")
-                schedulerService.scheduleAc(userId, targetState, Instant.now().plusSeconds(timeDifference * 60))
+                schedulerService.scheduleAc(userId, targetState, Instant.now().plusSeconds(timeDifference * multiplier))
             }
             in 16..60 -> {
-                logger.info("Inserted into LocationRunnable, check again in 15 minutes")
-                schedulerService.scheduleLocation(userId, targetState, eventTime, tarLocation, Instant.now().plusSeconds(15 * 60))
+                logger.info("Inserted into LocationRunnable, check again in 15 $timeUnit")
+                schedulerService.scheduleLocation(userId, targetState, eventTime, tarLocation, Instant.now().plusSeconds(15L * multiplier))
             }
             else -> {
-                logger.info("Inserted into LocationRunnable, check again in 60 minutes")
-                schedulerService.scheduleLocation(userId, targetState, eventTime, tarLocation, Instant.now().plusSeconds(60 * 60))
+                logger.info("Inserted into LocationRunnable, check again in 60 $timeUnit")
+                schedulerService.scheduleLocation(userId, targetState, eventTime, tarLocation, Instant.now().plusSeconds(60L * multiplier))
             }
         }
     }

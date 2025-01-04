@@ -41,3 +41,7 @@ google:
   maps:
     api:
       key: ${GOOGLE_MAPS_API_KEY}
+
+scheduling:
+  time:
+    unit: minutes # use minutes for production, seconds for testing
