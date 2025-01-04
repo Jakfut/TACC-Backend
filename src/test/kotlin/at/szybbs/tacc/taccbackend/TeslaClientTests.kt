@@ -7,7 +7,7 @@ import java.util.*
 import kotlin.test.Test
 
 @SpringBootTest
-class TessieClientTests {
+class TeslaClientTests {
     @Autowired
     private lateinit var teslaConnectionFactory: TeslaConnectionFactory
 

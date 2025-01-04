@@ -3,11 +3,9 @@ package at.szybbs.tacc.taccbackend.runnable.locationRunnable
 import at.szybbs.tacc.taccbackend.client.TaccDirections
 import at.szybbs.tacc.taccbackend.service.SchedulerService
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.ApplicationContext
 import java.time.Instant
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 // see flow diagram v0.2
 class LocationRunnable(

@@ -40,7 +40,12 @@ class RefreshSchedules(
                         true,
                         it.start,
                         it.location,
-                        it.start.minusSeconds(60 * 60 * 2) // 2 hours before the event
+                        it.start.minusSeconds(60 * 60 * 2) // check again 2 hours before the start of the event
+                    )
+                    schedulerService.scheduleAc(
+                        user.id,
+                        true,
+                        it.end.minusSeconds(60 * 5) // activate AC 5 minutes before the end of the event ends
                     )
                 }
             }
