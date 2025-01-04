@@ -1,9 +1,11 @@
 package at.szybbs.tacc.taccbackend.client.teslaConnection
 
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Component
-import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 
 @Component
@@ -11,17 +13,24 @@ import java.util.*
 class MockTeslaConnectionClient : TeslaConnectionClient {
     override lateinit var userId: UUID
 
+    private val logger = LoggerFactory.getLogger(MockTeslaConnectionClient::class.java)
+
     override fun getType(): TeslaConnectionType {
         return TeslaConnectionType.MOCK
     }
 
     override fun wake(): Boolean {
+        logger.info("Waking up mock tesla")
+
         return true
     }
 
     override fun getLocation(): String {
         // get current hour
-        val hour = Instant.now().epochSecond / 3600 % 24
+        val now = ZonedDateTime.now(ZoneId.systemDefault()) // Get current time in your system's timezone
+        val hour = now.hour
+
+        logger.info("Getting mock location for hour $hour")
 
         when (hour) {
             in 0..6 -> return "Feichsen 27"
@@ -33,10 +42,14 @@ class MockTeslaConnectionClient : TeslaConnectionClient {
     }
 
     override fun getStatus(): String {
+        logger.info("Getting mock status")
+
         return "awake"
     }
 
     override fun changeAcState(state: Boolean): Boolean {
+        logger.info("Changing mock AC state to $state")
+
         return true
     }
 }
