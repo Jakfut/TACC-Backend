@@ -6,8 +6,6 @@ import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationUpdateDefau
 import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.Authentication
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -34,13 +32,12 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
-    @PreAuthorize("@userSecurity.hasCreateUserRole()")
+    @PreAuthorize("hasAuthority('SCOPE_' + @environment.getProperty('security.authentication.roles.create-user'))")
     @PostMapping
     fun createUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: UserInformationCreationDto
     ) : ResponseEntity<UserInformationResponseDto> {
-
         val responseDto = userInformationService.createUserInformation(
             userInformationId,
             creationDto

@@ -40,7 +40,7 @@ security:
   authentication:
     roles:
       # for user registration sync with keycloak
-      create: ${KEYCLOAK_SYN_CREATE_ROLE}
+      create-user: ${KEYCLOAK_SYN_CREATE_ROLE}
 
   keycloak:
     # for user deletion sync with keycloak
