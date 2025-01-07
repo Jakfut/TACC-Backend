@@ -31,6 +31,9 @@ class LocationRunnable(
         println(timeDifference)
 
         when (timeDifference) {
+            in Int.MIN_VALUE..0 -> {
+                logger.error("TimeDifference is negative")
+            }
             in 0..15 -> {
                 logger.info("Inserted into AcRunnable with timeDifference: $timeDifference")
                 schedulerService.scheduleAc(userId, targetState, Instant.now().plusSeconds(timeDifference * multiplier))

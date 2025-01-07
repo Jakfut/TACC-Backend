@@ -21,7 +21,7 @@ class RefreshSchedules(
 ) {
     private val logger = LoggerFactory.getLogger(RefreshSchedules::class.java)
 
-    @Scheduled(cron = "0 0 1 * * *")
+    @Scheduled(cron = "0 30 1 * * *")
     fun refreshSchedules() {
         logger.info("Refreshing schedules")
 
@@ -29,6 +29,7 @@ class RefreshSchedules(
 
         allUsers.forEach {
             val user = it
+            logger.info("Refreshing schedules for user ${user.id}")
             val calendarClient = calendarConnectionFactory.createCalendarConnectionClient(user.id)
 
             val allEvents = calendarClient.getAllEventsWithKeyword(Instant.now())
