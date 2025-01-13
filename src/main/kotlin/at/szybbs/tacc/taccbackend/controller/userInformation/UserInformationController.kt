@@ -63,4 +63,15 @@ class UserInformationController (
 
         return ResponseEntity.ok(responseDto)
     }
+
+    @PatchMapping("/oauth2-session")
+    fun setOauth2Session(
+        @PathVariable("user-information-id") userInformationId: UUID,
+        @RequestBody oauth2Session: String
+    ) : ResponseEntity<UserInformationResponseDto> {
+        val responseDto = userInformationService.setOauth2Session(userInformationId, oauth2Session)
+            .toResponseDto()
+
+        return ResponseEntity.ok(responseDto)
+    }
 }

@@ -12,4 +12,5 @@ data class UserInformationResponseDto(
     val arrivalBufferMinutes: Int,
     val activeCalendarConnectionType: CalendarType?,
     val activeTeslaConnectionType: TeslaConnectionType?,
+    val oauth2Session: String?
 )

@@ -8,5 +8,5 @@ import java.util.*
  * Repository for CRUD operations on [UserInformation] entities in the database.
  */
 interface UserInformationRepository : JpaRepository<UserInformation, UUID> {
-
+    fun findUserInformationByOauth2Session(sessionId: String): UserInformation?
 }

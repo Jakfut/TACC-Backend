@@ -48,6 +48,9 @@ data class UserInformation(
      */
     @Column(name = "active_tesla_connection_type")
     var activeTeslaConnectionType: TeslaConnectionType? = null,
+
+    @Column(name = "oauth2_session")
+    var oauth2Session: String? = null
 ) {
     fun toResponseDto() : UserInformationResponseDto {
         return UserInformationResponseDto(
@@ -57,7 +60,8 @@ data class UserInformation(
             ccRuntimeMinutes = ccRuntimeMinutes,
             arrivalBufferMinutes = arrivalBufferMinutes,
             activeCalendarConnectionType = activeCalendarConnectionType,
-            activeTeslaConnectionType = activeTeslaConnectionType
+            activeTeslaConnectionType = activeTeslaConnectionType,
+            oauth2Session = oauth2Session
         )
     }
 }

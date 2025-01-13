@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.client.web.client.RequestAttributePri
 
 class TaccPrincipalResolver : PrincipalResolver {
     private val PRINCIPAL_ATTR_NAME = (RequestAttributePrincipalResolver::class.java.name + ".principal")
+
     override fun resolve(request: HttpRequest?): Authentication {
         return request!!.attributes[PRINCIPAL_ATTR_NAME] as Authentication
     }

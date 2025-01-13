@@ -9,6 +9,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
@@ -61,6 +63,11 @@ class OAuth2Config(
 
     @Bean
     fun oauth2UserService(): OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+        return DefaultOAuth2UserService()
+    }
+
+    /*@Bean
+    fun oauth2UserService(): OAuth2UserService<OAuth2UserRequest, OAuth2User> {
         return object : DefaultOAuth2UserService() {
             override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User {
                 val oAuth2User = super.loadUser(userRequest)
@@ -78,12 +85,12 @@ class OAuth2Config(
                 )
             }
         }
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     fun oauth2AuthorizationRequestResolver(
         clientRegistrationRepository: ClientRegistrationRepository
     ): OAuth2AuthorizationRequestResolver {
         return TaccAuthorizationRequestResolver(clientRegistrationRepository)
-    }
+    }*/
 }

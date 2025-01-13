@@ -89,4 +89,15 @@ class UserInformationService (
         return userInformationRepository.findById(userInformationId).isPresent
     }
 
+    fun setOauth2Session(userInformationId: UUID, oauth2Session: String) : UserInformation {
+        val userInformation = getUserInformation(userInformationId)
+
+        userInformation.oauth2Session = oauth2Session
+
+        return userInformationRepository.save(userInformation)
+    }
+
+    fun getUserInformationBySession(oauth2Session: String) : UUID? {
+        return userInformationRepository.findUserInformationByOauth2Session(oauth2Session)?.id
+    }
 }
