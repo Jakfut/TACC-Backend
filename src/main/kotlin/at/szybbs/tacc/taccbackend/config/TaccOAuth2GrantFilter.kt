@@ -3,7 +3,6 @@ package at.szybbs.tacc.taccbackend.config
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.slf4j.LoggerFactory
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient
@@ -28,11 +27,10 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.util.*
 
 @Component
-class StateDecodingFilter(
+class TaccOAuth2GrantFilter(
     private val clientRegistrationRepository: ClientRegistrationRepository,
     private val authorizedClientService: JdbcOAuth2AuthorizedClientService
 ) : OncePerRequestFilter() {
-    private val log = LoggerFactory.getLogger(StateDecodingFilter::class.java)
     private val oauth2AccessTokenResponseClient: OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> = RestClientAuthorizationCodeTokenResponseClient()
     private val authorizationRequestRepository: AuthorizationRequestRepository<OAuth2AuthorizationRequest> = HttpSessionOAuth2AuthorizationRequestRepository()
 
@@ -122,28 +120,6 @@ class StateDecodingFilter(
             )
 
             return response.sendRedirect("/authorized/google")
-
-            /*if (state != null) {
-                try {
-                    val decoder = Base64.getDecoder()
-                    val decodedState = String(decoder.decode(state))
-                    val parts = decodedState.split(";session_id=")
-                    if (parts.size == 2) {
-                        val originalState = parts[0]
-                        val sessionId = parts[1]
-
-                        // Store sessionId in session or other storage
-                        request.session.setAttribute("oauth_session_id", sessionId)
-                        log.warn("Retrieved sessionId from state: $sessionId")
-                        log.warn("Original state: $originalState")
-
-                        filterChain.doFilter(request, response)
-                        return
-                    }
-                } catch (e: Exception) {
-                    log.error("Error decoding state", e)
-                }
-            }*/
         }
 
         filterChain.doFilter(request, response)
