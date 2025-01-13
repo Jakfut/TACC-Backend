@@ -1,7 +1,7 @@
 package at.szybbs.tacc.taccbackend.client
 
 import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

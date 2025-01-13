@@ -25,6 +25,10 @@ class UserInformationService (
     private val keycloakAdminApiService: KeycloakAdminApiService
 ) {
 
+    fun getUserInformation() : List<UserInformation> {
+        return userInformationRepository.findAll()
+    }
+
     @Throws(UserInformationNotFoundException::class)
     fun getUserInformation(userInformationId: UUID) : UserInformation {
         return userInformationRepository.findById(userInformationId)
@@ -155,5 +159,17 @@ class UserInformationService (
 
     fun userInformationExists(userInformationId: UUID): Boolean {
         return userInformationRepository.findById(userInformationId).isPresent
+    }
+
+    fun getUserIdBySession(sessionId: String): UUID? {
+        return userInformationRepository.findUserInformationByOauth2Session(sessionId)?.id
+    }
+
+    fun setOauth2Session(userInformationId: UUID, oauth2Session: String) : UserInformation {
+        val userInformation = getUserInformation(userInformationId)
+
+        userInformation.oauth2Session = oauth2Session
+
+        return userInformationRepository.save(userInformation)
     }
 }

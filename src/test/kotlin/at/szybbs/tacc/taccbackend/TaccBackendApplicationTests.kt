@@ -2,7 +2,7 @@ package at.szybbs.tacc.taccbackend
 
 
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -38,12 +38,10 @@ class TaccBackendApplicationTests {
 	fun addUserInformation() {
 		val userInformationId = UUID.randomUUID()
 		val creationDto = UserInformationCreationDto(
-			noDestMinutes = 10,
-			ccRuntimeMinutes = 10,
-			arrivalBufferMinutes = 10
+			"test",
 		)
 
-		userInformationService.createUserInformation(userInformationId, creationDto, "email")
+		userInformationService.createUserInformation(userInformationId, creationDto)
 	}
 
 	@Test

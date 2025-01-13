@@ -2,7 +2,7 @@ package at.szybbs.tacc.taccbackend.factory
 
 import at.szybbs.tacc.taccbackend.client.calendarConnection.CalendarConnectionClient
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import jakarta.annotation.PostConstruct
 import org.springframework.context.ApplicationContext
 import org.springframework.stereotype.Service

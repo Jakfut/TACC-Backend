@@ -122,7 +122,6 @@ class GoogleCalendarConnectionService (
         calendarConnection.email = null
         calendarConnection.accessToken = null
         calendarConnection.refreshToken = null
-        calendarConnection.accessTokenExpiresAt = null
 
         val updatedUserInformation = googleCalendarConnectionRepository.save(calendarConnection)
 

@@ -1,6 +1,6 @@
 package at.szybbs.tacc.taccbackend.config
 
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse

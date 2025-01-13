@@ -26,13 +26,15 @@ class SecurityConfig {
             authorizeHttpRequests {
                 authorize(anyRequest, permitAll)
             }
-
             oauth2Login {
                 loginProcessingUrl = "/authorized/*"
 
                 authorizationEndpoint {
                     authorizationRequestResolver = TaccAuthorizationRequestResolver(clientRegistrationRepository)
                 }
+            }
+            oauth2ResourceServer {
+                jwt { }
             }
             addFilterBefore<OAuth2LoginAuthenticationFilter>(taccOAuth2GrantFilter)
         }

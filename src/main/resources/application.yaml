@@ -10,11 +10,14 @@ spring:
   jpa:
     show-sql: true         # Log SQL statements (disable in production)
     hibernate:
-      ddl-auto: update    # Update database when necessary (set to "update" in production)
+      ddl-auto: create    # Update database when necessary (set to "update" in production)
     open-in-view: false   # Don't keep JPA session open for whole HTTP request
 
   security:
     oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI}
       client:
         registration:
           google:
@@ -31,7 +34,7 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
 
 server:
-  port: 8080
+  port: 8088
 
 logging:
   file:
@@ -48,3 +51,24 @@ google:
 scheduling:
   time:
     unit: minutes # use minutes for production, seconds for testing
+
+# custom config
+security:
+  encryption:
+    attribute:
+      # for encrypting columns
+      password: ${ATTRIBUTE_ENCRYPTION_PASSWORD}
+      salt: ${ATTRIBUTE_ENCRYPTION_SALT}
+
+  authentication:
+    roles:
+      # for user registration sync with keycloak
+      create-user: ${KEYCLOAK_SYN_CREATE_ROLE}
+
+  keycloak:
+    # for user deletion sync with keycloak
+    admin-api:
+      server-url: ${KEYCLOAK_ADMIN_API_URL}
+      realm: ${KEYCLOAK_ADMIN_API_REALM}
+      client-id: ${KEYCLOAK_ADMIN_API_CLIENT_ID}
+      client-secret: ${KEYCLOAK_ADMIN_API_CLIENT_SECRET}
