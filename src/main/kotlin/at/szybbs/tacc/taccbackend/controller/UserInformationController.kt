@@ -1,10 +1,11 @@
-package at.szybbs.tacc.taccbackend.controller.userInformation
+package at.szybbs.tacc.taccbackend.controller
 
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationUpdateDefaultValuesDto
-import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -31,15 +32,16 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_' + @environment.getProperty('security.authentication.roles.create-user'))")
     @PostMapping
     fun createUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: UserInformationCreationDto
     ) : ResponseEntity<UserInformationResponseDto> {
-        val responseDto = userInformationService.createUserInformation(userInformationId, creationDto, "email@email.com")
-            .toResponseDto()
-
-        // TODO: replace jwtEmail
+        val responseDto = userInformationService.createUserInformation(
+            userInformationId,
+            creationDto
+        ).toResponseDto()
 
         return ResponseEntity.ok(responseDto)
     }
@@ -59,7 +61,27 @@ class UserInformationController (
         @RequestBody updateDto: UserInformationUpdateDefaultValuesDto
     ) : ResponseEntity<UserInformationResponseDto> {
         val responseDto = userInformationService.updateUserInformationDefaultValues(userInformationId, updateDto)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("calendar-connections/deactivate")
+    fun setActiveCalendarConnectionToNull(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ) : ResponseEntity<UserInformationResponseDto> {
+        val responseDto = userInformationService.setActiveCalendarConnectionTypeToNull(userInformationId)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("tesla-connections/deactivate")
+    fun setActiveTeslaConnectionToNull(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ) : ResponseEntity<UserInformationResponseDto> {
+        val responseDto = userInformationService.setActiveTeslaConnectionTypeToNull(userInformationId)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }

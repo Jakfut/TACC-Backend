@@ -14,7 +14,7 @@ data class UserInformation(
     @Column(name = "id", updatable = false, nullable = false)
     var id: UUID,
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, columnDefinition = "TEXT")
     var email: String,
 
     /**
@@ -39,6 +39,7 @@ data class UserInformation(
      * The type of the active calendar connection.
      * This property can be null if there is no active connection type.
      */
+    @Enumerated(EnumType.STRING)
     @Column(name = "active_calendar_connection_type")
     var activeCalendarConnectionType: CalendarType? = null,
 
@@ -46,6 +47,7 @@ data class UserInformation(
      * The type of the active Tesla connection.
      * This property can be null if there is no active connection type.
      */
+    @Enumerated(EnumType.STRING)
     @Column(name = "active_tesla_connection_type")
     var activeTeslaConnectionType: TeslaConnectionType? = null,
 

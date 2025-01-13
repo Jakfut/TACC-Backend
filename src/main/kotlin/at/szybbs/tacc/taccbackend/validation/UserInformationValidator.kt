@@ -1,4 +1,4 @@
-package at.szybbs.tacc.taccbackend.validation.userInformation
+package at.szybbs.tacc.taccbackend.validation
 
 import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import at.szybbs.tacc.taccbackend.exception.userInformation.UserInformationValidationException
@@ -24,7 +24,5 @@ class UserInformationValidator {
         val arrivalBufferMinutes = userInformation.arrivalBufferMinutes
         if (arrivalBufferMinutes < 0 || arrivalBufferMinutes > 60)
             throw UserInformationValidationException("arrivalBufferMinutes", arrivalBufferMinutes.toString())
-
-        // TODO: Implement further validation and adapt validation values for default values
     }
 }

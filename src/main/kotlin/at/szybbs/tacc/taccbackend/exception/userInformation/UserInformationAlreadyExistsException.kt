@@ -1,6 +1,5 @@
 package at.szybbs.tacc.taccbackend.exception.userInformation
 
-import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
 import java.util.UUID
 
 /**

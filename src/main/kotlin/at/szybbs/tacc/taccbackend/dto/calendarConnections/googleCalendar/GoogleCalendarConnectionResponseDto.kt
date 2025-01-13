@@ -6,5 +6,5 @@ import java.util.UUID
 data class GoogleCalendarConnectionResponseDto(
     override val userInformationId: UUID,
     val email: String?,
-    val keyword: String?,
+    val keyword: String,
 ) : CalendarConnectionResponseDto

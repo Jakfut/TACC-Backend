@@ -25,17 +25,13 @@ import java.util.*
  * @property tessieConnectionService Service for managing Tessie connections.
  */
 @RestController
-@RequestMapping("/api/user/{user-information-id}/tesla-connection/tessie")
-class
-TessieConnectionController (
+@RequestMapping("/api/user/{user-information-id}/tesla-connections/tessie")
+class TessieConnectionController (
     private val tessieConnectionService: TessieConnectionService
-) : TeslaConnectionController<
-        TessieConnectionCreationDto,
-        TessieConnectionResponseDto,
-        TessieConnectionUpdateDto> {
+) {
 
     @GetMapping
-    override fun getTeslaConnection(
+    fun getTeslaConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
     ) : ResponseEntity<TessieConnectionResponseDto> {
         val responseDto = tessieConnectionService.getTeslaConnection(userInformationId)
@@ -45,7 +41,7 @@ TessieConnectionController (
     }
 
     @DeleteMapping
-    override fun deleteTeslaConnection(
+    fun deleteTeslaConnection(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<Void> {
         tessieConnectionService.deleteTeslaConnection(userInformationId)
@@ -53,39 +49,29 @@ TessieConnectionController (
         return ResponseEntity.noContent().build()
     }
 
-    @PatchMapping("/active")
-    override fun setTeslaConnectionToActive(
+    @PatchMapping("/activate")
+    fun setTeslaConnectionToActive(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<UserInformationResponseDto> {
         val responseDto = tessieConnectionService.setTeslaConnectionToActive(userInformationId)
-            .toResponseDto()
-
-        return ResponseEntity.ok(responseDto)
-    }
-
-    @PatchMapping("/inactive")
-    override fun setTeslaConnectionToInActive(
-        @PathVariable("user-information-id") userInformationId: UUID
-    ): ResponseEntity<UserInformationResponseDto> {
-        val responseDto = tessieConnectionService.setTeslaConnectionToInactive(userInformationId)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }
 
     @PatchMapping
-    override fun updateTeslaConnectionPublicFields(
+    fun updateTeslaConnectionPublicFields(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody updateDto: TessieConnectionUpdateDto
     ): ResponseEntity<TessieConnectionResponseDto> {
         val responseDto = tessieConnectionService.updateTeslaConnectionPublicFields(userInformationId, updateDto)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }
 
     @PostMapping
-    override fun createTeslaConnection(
+    fun createTeslaConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: TessieConnectionCreationDto
     ): ResponseEntity<TessieConnectionResponseDto> {

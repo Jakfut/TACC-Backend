@@ -14,10 +14,8 @@ import org.springframework.stereotype.Component
 class GoogleCalendarConnectionValidator {
     fun validate(googleCalendarConnection: GoogleCalendarConnection) {
         val keyword = googleCalendarConnection.keyword
-        if (keyword != null && !keyword.matches(Regex("^#[a-zA-Z0-9]{3,5}\$"))) {
+        if (!keyword.matches(Regex("^#[a-zA-Z0-9]{3,5}\$"))) {
             throw CalendarConnectionValidationException("keyword", keyword)
         }
-
-        // TODO: Validate remaining fields
     }
 }

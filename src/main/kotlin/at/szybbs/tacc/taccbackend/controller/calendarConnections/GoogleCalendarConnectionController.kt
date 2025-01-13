@@ -25,16 +25,13 @@ import java.util.*
  * @property googleCalendarConnectionService Service for managing Google Calendar connections.
  */
 @RestController
-@RequestMapping("/api/user/{user-information-id}/calendar-connection/google-calendar")
+@RequestMapping("/api/user/{user-information-id}/calendar-connections/google-calendar")
 class GoogleCalendarConnectionController (
     private val googleCalendarConnectionService: GoogleCalendarConnectionService
-) : CalendarConnectionController<
-        GoogleCalendarConnectionCreationDto,
-        GoogleCalendarConnectionResponseDto,
-        GoogleCalendarConnectionUpdateDto> {
+) {
 
     @GetMapping
-    override fun getCalendarConnection(
+    fun getCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
     ) : ResponseEntity<GoogleCalendarConnectionResponseDto> {
         val responseDto = googleCalendarConnectionService.getCalendarConnection(userInformationId)
@@ -44,7 +41,7 @@ class GoogleCalendarConnectionController (
     }
 
     @DeleteMapping
-    override fun deleteCalendarConnection(
+    fun deleteCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<Void> {
         googleCalendarConnectionService.deleteCalendarConnection(userInformationId)
@@ -52,44 +49,55 @@ class GoogleCalendarConnectionController (
         return ResponseEntity.noContent().build()
     }
 
-    @PatchMapping("/active")
-    override fun setCalendarConnectionToActive(
+    @PatchMapping("/activate")
+    fun setCalendarConnectionToActive(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<UserInformationResponseDto> {
         val responseDto = googleCalendarConnectionService.setCalendarConnectionToActive(userInformationId)
-            .toResponseDto()
-
-        return ResponseEntity.ok(responseDto)
-    }
-
-    @PatchMapping("/inactive")
-    override fun setCalendarConnectionToInActive(
-        @PathVariable("user-information-id") userInformationId: UUID
-    ): ResponseEntity<UserInformationResponseDto> {
-        val responseDto = googleCalendarConnectionService.setCalendarConnectionToInactive(userInformationId)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }
 
     @PatchMapping
-    override fun updateCalendarConnectionPublicFields(
+    fun updateCalendarConnectionPublicFields(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody updateDto: GoogleCalendarConnectionUpdateDto
     ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
         val responseDto = googleCalendarConnectionService.updateCalendarConnectionPublicFields(userInformationId, updateDto)
-            .toResponseDto()
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }
 
     @PostMapping
-    override fun createCalendarConnection(
+    fun createCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: GoogleCalendarConnectionCreationDto
     ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
         val responseDto = googleCalendarConnectionService.createCalendarConnection(userInformationId, creationDto)
             .toResponseDto()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("/authorize")
+    fun authorizeByAuthorizationCode(
+        @PathVariable("user-information-id") userInformationId: UUID,
+        @RequestBody authorizationCode: String
+    ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
+        val responseDto = googleCalendarConnectionService.authorizeByAuthorizationCode(userInformationId, authorizationCode)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
+
+        return ResponseEntity.ok(responseDto)
+    }
+
+    @PatchMapping("/disconnect")
+    fun disconnectGoogleCalendarApi(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
+        val responseDto = googleCalendarConnectionService.disconnectGoogleCalendarApi(userInformationId)
+            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
 
         return ResponseEntity.ok(responseDto)
     }

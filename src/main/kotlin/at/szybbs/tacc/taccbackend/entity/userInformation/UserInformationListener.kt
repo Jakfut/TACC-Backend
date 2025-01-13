@@ -1,6 +1,6 @@
 package at.szybbs.tacc.taccbackend.entity.userInformation
 
-import at.szybbs.tacc.taccbackend.validation.userInformation.UserInformationValidator
+import at.szybbs.tacc.taccbackend.validation.UserInformationValidator
 import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import org.springframework.stereotype.Component
