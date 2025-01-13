@@ -1,5 +1,6 @@
 package at.szybbs.tacc.taccbackend.config
 
+import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -29,7 +30,8 @@ import java.util.*
 @Component
 class TaccOAuth2GrantFilter(
     private val clientRegistrationRepository: ClientRegistrationRepository,
-    private val authorizedClientService: JdbcOAuth2AuthorizedClientService
+    private val authorizedClientService: JdbcOAuth2AuthorizedClientService,
+    private val userInformationService: UserInformationService
 ) : OncePerRequestFilter() {
     private val oauth2AccessTokenResponseClient: OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> = RestClientAuthorizationCodeTokenResponseClient()
     private val authorizationRequestRepository: AuthorizationRequestRepository<OAuth2AuthorizationRequest> = HttpSessionOAuth2AuthorizationRequestRepository()
@@ -102,9 +104,12 @@ class TaccOAuth2GrantFilter(
             val parts = decodedState.split(";session_id=")
             val sessionId = parts[1]
 
+            // get user with session id
+            val userId = userInformationService.getUserIdBySession(sessionId)
+
             val authorizedClient = OAuth2AuthorizedClient(
                 clientRegistration,
-                sessionId,
+                userId.toString(),
                 tokenResponse.accessToken,
                 tokenResponse.refreshToken
             )

@@ -97,7 +97,7 @@ class UserInformationService (
         return userInformationRepository.save(userInformation)
     }
 
-    fun getUserInformationBySession(oauth2Session: String) : UUID? {
+    fun getUserIdBySession(oauth2Session: String) : UUID? {
         return userInformationRepository.findUserInformationByOauth2Session(oauth2Session)?.id
     }
 }

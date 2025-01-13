@@ -1,6 +1,8 @@
 package at.szybbs.tacc.taccbackend
 
 
+import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
+import at.szybbs.tacc.taccbackend.service.userInformation.UserInformationService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -14,6 +16,7 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.core.OAuth2AccessToken
 import org.springframework.security.oauth2.core.OAuth2RefreshToken
 import java.time.Instant
+import java.util.UUID
 
 @SpringBootTest
 class TaccBackendApplicationTests {
@@ -27,6 +30,21 @@ class TaccBackendApplicationTests {
 
 	@Autowired
 	lateinit var authorizedClientManager: AuthorizedClientServiceOAuth2AuthorizedClientManager
+
+	@Autowired
+	lateinit var userInformationService: UserInformationService
+
+	@Test
+	fun addUserInformation() {
+		val userInformationId = UUID.randomUUID()
+		val creationDto = UserInformationCreationDto(
+			noDestMinutes = 10,
+			ccRuntimeMinutes = 10,
+			arrivalBufferMinutes = 10
+		)
+
+		userInformationService.createUserInformation(userInformationId, creationDto, "email")
+	}
 
 	@Test
 	fun addAuthorizedClient(){
