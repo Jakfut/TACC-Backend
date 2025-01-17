@@ -115,7 +115,7 @@ class TaccOAuth2GrantFilter(
             )
 
             val authentication = UsernamePasswordAuthenticationToken(
-                sessionId,
+                userId.toString(),
                 null
             )
 
