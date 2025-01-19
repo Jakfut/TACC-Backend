@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  backend:
+    image: 'taccbackend:latest'
+    ports:
+      - "8080:8088"
+    environment:
+      - DATABASE_URL=jdbc:postgresql://db:5432/taccbackend
+      - DATABASE_USERNAME=myuser
+      - DATABASE_PASSWORD=mypassword
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_MAPS_API_KEY=
+      - JWT_ISSUER_URI=test
+      - KEYCLOAK_ADMIN_API_CLIENT_ID=
+      - KEYCLOAK_ADMIN_API_CLIENT_SECRET=
+      - KEYCLOAK_ADMIN_API_REALM=
+      - KEYCLOAK_ADMIN_API_URL=
+      - KEYCLOAK_SYN_CREATE_ROLE=
+    depends_on:
+      - db
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=taccbackend
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
