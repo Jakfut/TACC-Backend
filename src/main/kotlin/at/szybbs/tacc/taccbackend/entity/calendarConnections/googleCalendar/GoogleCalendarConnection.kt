@@ -25,12 +25,6 @@ data class GoogleCalendarConnection(
     @JsonIgnore
     override var userInformation: UserInformation? = null,
 
-    @Column(name = "access_token")
-    var accessToken: String? = null,
-
-    @Column(name = "refresh_token")
-    var refreshToken: String? = null,
-
     @Column(name = "email")
     var email: String? = null,
 

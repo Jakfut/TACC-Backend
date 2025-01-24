@@ -120,8 +120,7 @@ class GoogleCalendarConnectionService (
         if (calendarConnection.email == null) return null
 
         calendarConnection.email = null
-        calendarConnection.accessToken = null
-        calendarConnection.refreshToken = null
+        // TODO: delete OAuth2AuthorizedClient entry
 
         val updatedUserInformation = googleCalendarConnectionRepository.save(calendarConnection)
 

@@ -81,17 +81,6 @@ class GoogleCalendarConnectionController (
         return ResponseEntity.ok(responseDto)
     }
 
-    @PatchMapping("/authorize")
-    fun authorizeByAuthorizationCode(
-        @PathVariable("user-information-id") userInformationId: UUID,
-        @RequestBody authorizationCode: String
-    ): ResponseEntity<GoogleCalendarConnectionResponseDto> {
-        val responseDto = googleCalendarConnectionService.authorizeByAuthorizationCode(userInformationId, authorizationCode)
-            ?.toResponseDto() ?: return ResponseEntity.noContent().build()
-
-        return ResponseEntity.ok(responseDto)
-    }
-
     @PatchMapping("/disconnect")
     fun disconnectGoogleCalendarApi(
         @PathVariable("user-information-id") userInformationId: UUID

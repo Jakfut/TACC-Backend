@@ -14,7 +14,7 @@ data class UserInformation(
     @Column(name = "id", updatable = false, nullable = false)
     var id: UUID,
 
-    @Column(name = "email", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "email", nullable = false, columnDefinition = "TEXT", unique = true)
     var email: String,
 
     /**
