@@ -1,6 +1,5 @@
 package at.szybbs.tacc.taccbackend.security
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import org.springframework.stereotype.Component
@@ -18,6 +17,4 @@ class UserSecurity {
 
         return userInformationId == UUID.fromString(authUserInformationId)
     }
-
-    // TODO: use as @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)") on all controller-methods
 }

@@ -6,6 +6,7 @@ import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleC
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -31,6 +32,7 @@ class GoogleCalendarConnectionController (
 ) {
 
     @GetMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun getCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
     ) : ResponseEntity<GoogleCalendarConnectionResponseDto> {
@@ -41,6 +43,7 @@ class GoogleCalendarConnectionController (
     }
 
     @DeleteMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun deleteCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<Void> {
@@ -50,6 +53,7 @@ class GoogleCalendarConnectionController (
     }
 
     @PatchMapping("/activate")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun setCalendarConnectionToActive(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<UserInformationResponseDto> {
@@ -60,6 +64,7 @@ class GoogleCalendarConnectionController (
     }
 
     @PatchMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun updateCalendarConnectionPublicFields(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody updateDto: GoogleCalendarConnectionUpdateDto
@@ -71,6 +76,7 @@ class GoogleCalendarConnectionController (
     }
 
     @PostMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun createCalendarConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: GoogleCalendarConnectionCreationDto
@@ -82,6 +88,7 @@ class GoogleCalendarConnectionController (
     }
 
     @PatchMapping("/disconnect")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun disconnectGoogleCalendarApi(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<GoogleCalendarConnectionResponseDto> {

@@ -22,6 +22,7 @@ class UserInformationController (
     private val userInformationService: UserInformationService
 ) {
 
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     @GetMapping
     fun getUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID
@@ -32,8 +33,8 @@ class UserInformationController (
         return ResponseEntity.ok(responseDto)
     }
 
-    @PreAuthorize("hasAuthority('SCOPE_' + @environment.getProperty('security.authentication.roles.create-user'))")
     @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_' + @environment.getProperty('security.authentication.roles.create-user'))")
     fun createUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: UserInformationCreationDto
@@ -47,6 +48,7 @@ class UserInformationController (
     }
 
     @DeleteMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun deleteUserInformation(
         @PathVariable("user-information-id") userInformationId: UUID
     ) : ResponseEntity<Void> {
@@ -56,6 +58,7 @@ class UserInformationController (
     }
 
     @PatchMapping("/default-values")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun updateUserInformationDefaultValues(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody updateDto: UserInformationUpdateDefaultValuesDto
@@ -67,6 +70,7 @@ class UserInformationController (
     }
 
     @PatchMapping("calendar-connections/deactivate")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun setActiveCalendarConnectionToNull(
         @PathVariable("user-information-id") userInformationId: UUID
     ) : ResponseEntity<UserInformationResponseDto> {
@@ -77,6 +81,7 @@ class UserInformationController (
     }
 
     @PatchMapping("tesla-connections/deactivate")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun setActiveTeslaConnectionToNull(
         @PathVariable("user-information-id") userInformationId: UUID
     ) : ResponseEntity<UserInformationResponseDto> {
@@ -87,6 +92,7 @@ class UserInformationController (
     }
 
     @PatchMapping("/oauth2-session")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun setOauth2Session(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody oauth2Session: String

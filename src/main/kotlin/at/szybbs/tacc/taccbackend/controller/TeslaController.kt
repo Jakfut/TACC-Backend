@@ -2,6 +2,7 @@ package at.szybbs.tacc.taccbackend.controller
 
 import at.szybbs.tacc.taccbackend.dto.tesla.TeslaClimateActivationResponseDto
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -16,6 +17,7 @@ import java.util.UUID
 class TeslaController {
 
     @GetMapping("/reachable")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun teslaIsReachable(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<Boolean> {
@@ -25,6 +27,7 @@ class TeslaController {
     }
 
     @GetMapping("/location")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun teslaLocation(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<String> {
@@ -34,6 +37,7 @@ class TeslaController {
     }
 
     @GetMapping("/climate/state")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun teslaClimateIsActive(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<Boolean> {
@@ -43,6 +47,7 @@ class TeslaController {
     }
 
     @PatchMapping("/climate/state")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun setTeslaClimateToInactive(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody state: Boolean
@@ -53,6 +58,7 @@ class TeslaController {
     }
 
     @GetMapping("/climate/upcoming-activations")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun upcomingActivations(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<List<TeslaClimateActivationResponseDto>> {

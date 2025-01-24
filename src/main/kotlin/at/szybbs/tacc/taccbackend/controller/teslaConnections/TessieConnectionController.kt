@@ -6,6 +6,7 @@ import at.szybbs.tacc.taccbackend.dto.teslaConnections.tessie.TessieConnectionUp
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -31,6 +32,7 @@ class TessieConnectionController (
 ) {
 
     @GetMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun getTeslaConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
     ) : ResponseEntity<TessieConnectionResponseDto> {
@@ -41,6 +43,7 @@ class TessieConnectionController (
     }
 
     @DeleteMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun deleteTeslaConnection(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<Void> {
@@ -50,6 +53,7 @@ class TessieConnectionController (
     }
 
     @PatchMapping("/activate")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun setTeslaConnectionToActive(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<UserInformationResponseDto> {
@@ -60,6 +64,7 @@ class TessieConnectionController (
     }
 
     @PatchMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun updateTeslaConnectionPublicFields(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody updateDto: TessieConnectionUpdateDto
@@ -71,6 +76,7 @@ class TessieConnectionController (
     }
 
     @PostMapping
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun createTeslaConnection(
         @PathVariable("user-information-id") userInformationId: UUID,
         @RequestBody creationDto: TessieConnectionCreationDto

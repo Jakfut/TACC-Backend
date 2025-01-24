@@ -1,6 +1,7 @@
 package at.szybbs.tacc.taccbackend.controller
 
 import at.szybbs.tacc.taccbackend.service.UserInformationService
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
@@ -13,6 +14,7 @@ class OAuth2GrantController(
 )
 {
     @GetMapping("/auth/google/start/{user-information-id}")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
     fun handleGoogleRedirect(
         @PathVariable("user-information-id") userInformationId: UUID
     ): String {
