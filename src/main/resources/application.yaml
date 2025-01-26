@@ -35,6 +35,7 @@ spring:
 
 server:
   port: 8088
+  forward-headers-strategy: framework
 
 logging:
   file:

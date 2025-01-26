@@ -29,6 +29,7 @@ class TaccAuthorizationRequestResolver(
 
                 return OAuth2AuthorizationRequest.from(defaultAuthorizationRequest)
                     .state(String(newState))
+                    .additionalParameters(defaultAuthorizationRequest.additionalParameters + mapOf("access_type" to "offline"))
                     .build()
             }
         }

@@ -22,6 +22,6 @@ class OAuth2GrantController(
 
         userInformationService.setOauth2Session(userInformationId,generatedSession)
 
-        return "tacc.jakfut.at/oauth2/authorization/google?session_id=$generatedSession"
+        return "https://tacc.jakfut.at/oauth2/authorization/google?session_id=$generatedSession"
     }
 }
