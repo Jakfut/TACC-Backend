@@ -9,7 +9,7 @@ import kotlin.test.Test
 
 @SpringBootTest
 class GoogleClientTests {
-    val userId = "409cd7c7-e82d-406c-a784-621598ff45e9"
+    val userId = "c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"
 
     @Autowired
     private lateinit var calendarConnectionFactory: CalendarConnectionFactory

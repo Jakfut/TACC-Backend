@@ -15,7 +15,7 @@ class AcRunnableTests {
     @Test
     fun scheduleAcOn() {
         schedulerService.scheduleAc(
-            UUID.fromString("409cd7c7-e82d-406c-a784-621598ff45e9"),
+            UUID.fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"),
             true,
             Instant.now().plusSeconds(4)
         )

@@ -10,7 +10,7 @@ spring:
   jpa:
     show-sql: true         # Log SQL statements (disable in production)
     hibernate:
-      ddl-auto: create    # Update database when necessary (set to "update" in production)
+      ddl-auto: update    # Update database when necessary (set to "update" in production)
     open-in-view: false   # Don't keep JPA session open for whole HTTP request
 
   security:

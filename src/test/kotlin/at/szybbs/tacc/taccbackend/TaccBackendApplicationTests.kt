@@ -24,7 +24,7 @@ import java.util.UUID
 
 @SpringBootTest
 class TaccBackendApplicationTests {
-	val userId = "bc9e696f-3d58-4cd7-9cc5-a2dd4700ac02"
+	val userId = "c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"
 
 	@Autowired
 	lateinit var authorizedClientService: JdbcOAuth2AuthorizedClientService
