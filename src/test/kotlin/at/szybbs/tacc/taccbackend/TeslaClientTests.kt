@@ -12,7 +12,7 @@ class TeslaClientTests {
     private lateinit var teslaConnectionFactory: TeslaConnectionFactory
 
     private val teslaConnectionClient by lazy { teslaConnectionFactory.createTeslaConnectionClient(
-        UUID.fromString("409cd7c7-e82d-406c-a784-621598ff45e9")) }
+        UUID.fromString("bc9e696f-3d58-4cd7-9cc5-a2dd4700ac02")) }
 
     @Test
     fun wake() {
@@ -30,6 +30,15 @@ class TeslaClientTests {
         println("Status: $status")
 
         assert(status == "asleep" || status == "waiting_for_sleep" || status == "awake")
+    }
+
+    @Test
+    fun getAcStatus() {
+        val acStatus = teslaConnectionClient.getAcStatus()
+
+        println("AC State: $acStatus")
+
+        assert(acStatus)
     }
 
     @Test

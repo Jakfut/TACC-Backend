@@ -11,5 +11,6 @@ interface TeslaConnectionClient {
     fun wake(): Boolean
     fun getLocation(): String
     fun getStatus(): String
+    fun getAcStatus(): Boolean
     fun changeAcState(state: Boolean): Boolean
 }

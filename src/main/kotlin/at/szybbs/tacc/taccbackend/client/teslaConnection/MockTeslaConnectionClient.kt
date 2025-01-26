@@ -47,6 +47,12 @@ class MockTeslaConnectionClient : TeslaConnectionClient {
         return "awake"
     }
 
+    override fun getAcStatus(): Boolean {
+        logger.info("Getting mock AC state")
+
+        return true
+    }
+
     override fun changeAcState(state: Boolean): Boolean {
         logger.info("Changing mock AC state to $state")
 

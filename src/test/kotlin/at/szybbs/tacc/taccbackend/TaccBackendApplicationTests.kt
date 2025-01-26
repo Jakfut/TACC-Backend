@@ -1,8 +1,12 @@
 package at.szybbs.tacc.taccbackend
 
 
+import at.szybbs.tacc.taccbackend.dto.teslaConnections.tessie.TessieConnectionCreationDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
+import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
+import at.szybbs.tacc.taccbackend.repository.teslaConnections.TessieConnectionRepository
 import at.szybbs.tacc.taccbackend.service.UserInformationService
+import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -20,7 +24,7 @@ import java.util.UUID
 
 @SpringBootTest
 class TaccBackendApplicationTests {
-	val userId = "409cd7c7-e82d-406c-a784-621598ff45e9"
+	val userId = "bc9e696f-3d58-4cd7-9cc5-a2dd4700ac02"
 
 	@Autowired
 	lateinit var authorizedClientService: JdbcOAuth2AuthorizedClientService
@@ -34,6 +38,12 @@ class TaccBackendApplicationTests {
 	@Autowired
 	lateinit var userInformationService: UserInformationService
 
+	@Autowired
+	lateinit var tessieConnectionService: TessieConnectionService
+
+	@Autowired
+	lateinit var tessieConnectionRepository: TessieConnectionRepository
+
 	@Test
 	fun addUserInformation() {
 		val userInformationId = UUID.randomUUID()
@@ -43,6 +53,19 @@ class TaccBackendApplicationTests {
 
 		userInformationService.createUserInformation(userInformationId, creationDto)
 	}
+
+	 @Test
+	 fun addTeslaConnection(){
+		val userInformationId = UUID.fromString(userId)
+		val creationDto = TessieConnectionCreationDto(
+			"?",
+			"?",
+		)
+
+		tessieConnectionService.createTeslaConnection(userInformationId, creationDto)
+
+	 	userInformationService.setActiveTeslaConnectionType(userInformationId, TeslaConnectionType.TESSIE, tessieConnectionRepository)
+	 }
 
 	@Test
 	fun addAuthorizedClient(){

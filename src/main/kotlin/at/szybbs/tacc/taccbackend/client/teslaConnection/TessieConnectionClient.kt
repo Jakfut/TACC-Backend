@@ -29,8 +29,8 @@ class TessieConnectionClient(
         return TeslaConnectionType.TESSIE
     }
 
-    private val vin: String by lazy { tessieConnectionService.getTeslaConnection(userId).vin.toString() }
-    private val token: String by lazy { tessieConnectionService.getTeslaConnection(userId).accessToken.toString() }
+    private val vin: String by lazy { tessieConnectionService.getTeslaConnection(userId).vin }
+    private val token: String by lazy { tessieConnectionService.getTeslaConnection(userId).accessToken }
 
     /**
      *  Wakes up the car with the given vin
@@ -94,6 +94,28 @@ class TessieConnectionClient(
     }
 
     /**
+     *  Gets the ac state of the car with the given vin
+     *  @return the ac state of the car
+     */
+
+    override fun getAcStatus(): Boolean {
+        val result = restClient.get()
+            .uri("/{vin}/state", vin)
+            .header("Authorization", "Bearer: $token")
+            .retrieve()
+            .toEntity(Map::class.java)
+
+        if (!result.statusCode.is2xxSuccessful) {
+            logger.warn("Failed to get ac state of car with vin: $vin, Body: ${result.body}")
+        }
+
+        // Safely extract the "ac state" value from the Map
+        val climateState = result.body?.get("climate_state") as? Map<*, *>
+        val isClimateOn = climateState?.get("is_climate_on") as? Boolean ?: false
+        return isClimateOn
+    }
+
+    /**
      *  Changes the ac state of the car with the given vin
      *  @param state the new state of the ac
      *  @return true if the ac state was successfully changed
@@ -116,6 +138,7 @@ class TessieConnectionClient(
 
         logger.info("Changed AC state of car with vin: $vin to $state")
 
-        return true //result.statusCode.is2xxSuccessful
+        return result.statusCode.is2xxSuccessful
+
     }
 }
