@@ -1,6 +1,7 @@
 package at.szybbs.tacc.taccbackend.controller
 
 import at.szybbs.tacc.taccbackend.dto.tesla.TeslaClimateActivationResponseDto
+import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,52 +15,60 @@ import java.util.UUID
 
 @RestController
 @RequestMapping("/api/user/{user-information-id}/tesla")
-class TeslaController {
+class TeslaController (
+    private val teslaConnectionFactory: TeslaConnectionFactory
+) {
 
     @GetMapping("/reachable")
     @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
-    fun teslaIsReachable(
+    fun isTeslaReachable(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<Boolean> {
-        // TODO: call http-client
+        val teslaConnectionClient = teslaConnectionFactory.createTeslaConnectionClient(userInformationId)
+        teslaConnectionClient.getStatus()
 
-        return ResponseEntity.ok(false)
+        return ResponseEntity.ok(true)
     }
 
     @GetMapping("/location")
     @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
-    fun teslaLocation(
+    fun getTeslaLocation(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<String> {
-        // TODO: call http-client
+        val teslaConnectionClient = teslaConnectionFactory.createTeslaConnectionClient(userInformationId)
+        val location = teslaConnectionClient.getLocation()
 
-        return ResponseEntity.ok("Address")
+        return ResponseEntity.ok(location)
     }
 
     @GetMapping("/climate/state")
     @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
-    fun teslaClimateIsActive(
+    fun getTeslaClimateState(
         @PathVariable("user-information-id") userInformationId: UUID,
     ): ResponseEntity<Boolean> {
-        // TODO: call http-client
+        val teslaConnectionClient = teslaConnectionFactory.createTeslaConnectionClient(userInformationId)
+        val climateState = teslaConnectionClient.getAcStatus()
 
-        return ResponseEntity.ok(false)
+        return ResponseEntity.ok(climateState)
     }
 
     @PatchMapping("/climate/state")
     @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
-    fun setTeslaClimateToInactive(
+    fun setTeslaClimateState(
         @PathVariable("user-information-id") userInformationId: UUID,
-        @RequestBody state: Boolean
+        @RequestBody newState: Boolean
     ): ResponseEntity<Boolean> {
-        // TODO: call http-client
+        val teslaConnectionClient = teslaConnectionFactory.createTeslaConnectionClient(userInformationId)
+        val successful = teslaConnectionClient.changeAcState(newState)
 
-        return ResponseEntity.ok(state)
+        if (!successful) throw RuntimeException("Failed to change climate state to $newState")
+
+        return ResponseEntity.ok(newState)
     }
 
     @GetMapping("/climate/upcoming-activations")
     @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
-    fun upcomingActivations(
+    fun getUpcomingActivations(
         @PathVariable("user-information-id") userInformationId: UUID
     ): ResponseEntity<List<TeslaClimateActivationResponseDto>> {
         // TODO: call http-client

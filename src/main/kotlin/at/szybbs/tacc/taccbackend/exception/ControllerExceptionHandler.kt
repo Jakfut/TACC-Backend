@@ -39,7 +39,7 @@ class ControllerExceptionHandler {
         UserInformationAlreadyExistsException::class,
         UserInformationKeycloakDeletionSynchronizationException::class
     )
-    fun handleConflictExceptions(e: RuntimeException): ResponseEntity<ErrorResponse> {
+    fun handleCustomConflictExceptions(e: RuntimeException): ResponseEntity<ErrorResponse> {
         return createErrorResponse(e = e, status = HttpStatus.CONFLICT)
     }
 
@@ -52,6 +52,13 @@ class ControllerExceptionHandler {
         return createErrorResponse(e = e, status = HttpStatus.BAD_REQUEST)
     }
 
+    @ExceptionHandler(
+        Exception::class,
+    )
+    fun handleRemainingExceptions(e: Exception): ResponseEntity<ErrorResponse> {
+        return createErrorResponse(e = e, status = HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+
     /**
      * Creates a standardized error response for exceptions.
      *
@@ -59,7 +66,7 @@ class ControllerExceptionHandler {
      * @param status The HTTP status to associate with the error response.
      * @return A ResponseEntity containing the ErrorResponse with the specified status and details.
      */
-    private fun createErrorResponse(e: RuntimeException, status: HttpStatus): ResponseEntity<ErrorResponse> {
+    private fun createErrorResponse(e: Exception, status: HttpStatus): ResponseEntity<ErrorResponse> {
         val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
         val request = requestAttributes.request
 

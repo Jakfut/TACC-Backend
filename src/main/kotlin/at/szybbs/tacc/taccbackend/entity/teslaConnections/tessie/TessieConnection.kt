@@ -11,7 +11,6 @@ import org.hibernate.annotations.OnDeleteAction
 import java.util.UUID
 
 @Entity
-@EntityListeners(TessieConnectionListener::class)
 @Table(name = "tessie_connection")
 data class TessieConnection(
 
