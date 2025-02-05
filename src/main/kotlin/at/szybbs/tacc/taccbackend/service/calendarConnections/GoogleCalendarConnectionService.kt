@@ -63,10 +63,6 @@ class GoogleCalendarConnectionService (
 
         val updatedCalendarConnection = googleCalendarConnectionRepository.save(calendarConnection)
 
-        if (calendarTypeIsCurrentlyActive(userInformationId)) {
-            // TODO: call/update http-Client, if active?
-        }
-
         return updatedCalendarConnection
     }
 
@@ -95,38 +91,15 @@ class GoogleCalendarConnectionService (
     @Throws(
         CalendarConnectionNotFoundException::class,
     )
-    fun authorizeByAuthorizationCode(userInformationId: UUID, authorizationCode: String): GoogleCalendarConnection? {
-        // TODO: change implementation based on implementation of http-client
-
-        val calendarConnection = getCalendarConnection(userInformationId)
-
-        val previousEmail = calendarConnection.email
-
-        // TODO: call http-client to authorize the connection and update the resource
-
-        val updatedCalendarConnection = getCalendarConnection(userInformationId)
-
-        if (previousEmail == updatedCalendarConnection.email) return null
-
-        return updatedCalendarConnection
-    }
-
-    @Throws(
-        CalendarConnectionNotFoundException::class,
-    )
     fun disconnectGoogleCalendarApi(userInformationId: UUID) : GoogleCalendarConnection? {
         val calendarConnection = getCalendarConnection(userInformationId)
 
         if (calendarConnection.email == null) return null
 
         calendarConnection.email = null
-        // TODO: delete OAuth2AuthorizedClient entry
+        // TODO: delete OAuth2AuthorizedClient entry + adapt to changes of entity
 
         val updatedUserInformation = googleCalendarConnectionRepository.save(calendarConnection)
-
-        if (calendarTypeIsCurrentlyActive(userInformationId)) {
-            // TODO: call/update http-Client, if active?
-        }
 
         return updatedUserInformation
     }

@@ -80,8 +80,6 @@ class UserInformationService (
 
         val updatedUserInformation = userInformationRepository.save(userInformation)
 
-        // TODO: call/update http-Client
-
         return updatedUserInformation
     }
 
@@ -100,8 +98,6 @@ class UserInformationService (
 
         val updatedUserInformation = userInformationRepository.save(userInformation)
 
-        // TODO: call/update http-Client -> maybe check if connection can be established to throw an error if it's not possible
-
         return updatedUserInformation
     }
 
@@ -116,8 +112,6 @@ class UserInformationService (
         userInformation.activeCalendarConnectionType = null
 
         val updatedUserInformation = userInformationRepository.save(userInformation)
-
-        // TODO: call/update http-Client -> maybe check if connection can be established to throw an error if it's not possible
 
         return updatedUserInformation
     }
@@ -137,8 +131,6 @@ class UserInformationService (
 
         val updatedUserInformation = userInformationRepository.save(userInformation)
 
-        // TODO: call/update http-Client -> maybe check if connection can be established to throw an error if it's not possible
-
         return updatedUserInformation
     }
 
@@ -151,8 +143,6 @@ class UserInformationService (
         userInformation.activeTeslaConnectionType = null
 
         val updatedUserInformation = userInformationRepository.save(userInformation)
-
-        // TODO: call/update http-Client -> maybe check if connection can be established to throw an error if it's not possible
 
         return updatedUserInformation
     }
