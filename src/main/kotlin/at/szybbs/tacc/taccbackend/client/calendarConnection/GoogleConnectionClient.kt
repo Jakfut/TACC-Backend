@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor
 import org.springframework.security.oauth2.client.web.client.RequestAttributeClientRegistrationIdResolver.clientRegistrationId
+import org.springframework.security.oauth2.client.web.client.RequestAttributePrincipalResolver
 import org.springframework.security.oauth2.client.web.client.RequestAttributePrincipalResolver.principal
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
@@ -34,8 +35,11 @@ class GoogleConnectionClient(
     private val restClient = RestClient.builder()
         .baseUrl("https://www.googleapis.com/calendar/v3")
         .defaultHeaders { it.set("Content-Type", "application/json") }
-        .requestInterceptor(OAuth2ClientHttpRequestInterceptor(authorizedClientManager).apply {
+        /*.requestInterceptor(OAuth2ClientHttpRequestInterceptor(authorizedClientManager).apply {
             setPrincipalResolver(at.szybbs.tacc.taccbackend.client.TaccPrincipalResolver())
+        })*/
+        .requestInterceptor(OAuth2ClientHttpRequestInterceptor(authorizedClientManager).apply {
+            setPrincipalResolver(RequestAttributePrincipalResolver())
         })
         .build()
 

@@ -1,6 +1,9 @@
 package at.szybbs.tacc.taccbackend
 
+import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
 import at.szybbs.tacc.taccbackend.factory.CalendarConnectionFactory
+import at.szybbs.tacc.taccbackend.repository.calendarConnections.GoogleCalendarConnectionRepository
+import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.Instant
@@ -16,6 +19,17 @@ class GoogleClientTests {
 
     private val calendarConnectionClient by lazy { calendarConnectionFactory.createCalendarConnectionClient(
         UUID.fromString(userId)) }
+
+    @Autowired
+    lateinit var userInformationService: UserInformationService
+
+    @Autowired
+    lateinit var googleConnectionRepository: GoogleCalendarConnectionRepository
+
+    @Test
+    fun setCalendarConnectionType() {
+        userInformationService.setActiveCalendarConnectionType(UUID.fromString(userId), CalendarType.GOOGLE_CALENDAR, googleConnectionRepository)
+    }
 
     @Test
     fun getCalendarIdList() {
