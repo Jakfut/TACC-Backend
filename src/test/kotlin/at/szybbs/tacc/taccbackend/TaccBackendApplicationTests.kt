@@ -68,6 +68,12 @@ class TaccBackendApplicationTests {
 	 }
 
 	@Test
+	fun setActiveTeslaConnection(){
+		val userInformationId = UUID.fromString(userId)
+		userInformationService.setActiveTeslaConnectionType(userInformationId, TeslaConnectionType.MOCK, tessieConnectionRepository)
+	}
+
+	@Test
 	fun addAuthorizedClient(){
 		val clientRegistration: ClientRegistration = clientRegistrationRepository
 			.findByRegistrationId("google")
