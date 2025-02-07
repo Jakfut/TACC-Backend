@@ -58,4 +58,10 @@ class MockTeslaConnectionClient : TeslaConnectionClient {
 
         return true
     }
+
+    override fun testConnection(vin: String, token: String): Boolean {
+        logger.info("Testing mock connection")
+
+        return true
+    }
 }

@@ -139,6 +139,15 @@ class TessieConnectionClient(
         logger.info("Changed AC state of car with vin: $vin to $state")
 
         return result.statusCode.is2xxSuccessful
+    }
 
+    override fun testConnection(vin: String, token: String): Boolean {
+        val result = restClient.get()
+            .uri("/{vin}/status", vin)
+            .header("Authorization", "Bearer: $token")
+            .retrieve()
+            .toEntity<Map<String, String>>()
+
+        return result.statusCode.is2xxSuccessful
     }
 }

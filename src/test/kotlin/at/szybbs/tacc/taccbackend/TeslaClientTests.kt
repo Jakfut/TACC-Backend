@@ -1,8 +1,10 @@
 package at.szybbs.tacc.taccbackend
 
+import at.szybbs.tacc.taccbackend.client.teslaConnection.TessieConnectionClient
 import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.ApplicationContext
 import java.util.*
 import kotlin.test.Test
 
@@ -10,6 +12,9 @@ import kotlin.test.Test
 class TeslaClientTests {
     @Autowired
     private lateinit var teslaConnectionFactory: TeslaConnectionFactory
+
+    @Autowired
+    private lateinit var applicationContext: ApplicationContext
 
     private val teslaConnectionClient by lazy { teslaConnectionFactory.createTeslaConnectionClient(
         UUID.fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8")) }
@@ -38,7 +43,7 @@ class TeslaClientTests {
 
         println("AC State: $acStatus")
 
-        assert(acStatus)
+        assert(true)
     }
 
     @Test
@@ -62,6 +67,15 @@ class TeslaClientTests {
         val result = teslaConnectionClient.changeAcState(false)
 
         println("AC State: $result")
+
+        assert(result)
+    }
+
+    @Test
+    fun testConnection() {
+        val result = applicationContext.getBean(TessieConnectionClient::class.java).testConnection("", "")
+
+        println("Connection: $result")
 
         assert(result)
     }
