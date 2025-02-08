@@ -1,6 +1,7 @@
 package at.szybbs.tacc.taccbackend.config
 
 import at.szybbs.tacc.taccbackend.service.UserInformationService
+import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -31,7 +32,8 @@ import java.util.*
 class TaccOAuth2GrantFilter(
     private val clientRegistrationRepository: ClientRegistrationRepository,
     private val authorizedClientService: JdbcOAuth2AuthorizedClientService,
-    private val userInformationService: UserInformationService
+    private val userInformationService: UserInformationService,
+    private val googleCalendarConnectionService: GoogleCalendarConnectionService
 ) : OncePerRequestFilter() {
     private val oauth2AccessTokenResponseClient: OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> = RestClientAuthorizationCodeTokenResponseClient()
     private val authorizationRequestRepository: AuthorizationRequestRepository<OAuth2AuthorizationRequest> = HttpSessionOAuth2AuthorizationRequestRepository()
@@ -105,17 +107,18 @@ class TaccOAuth2GrantFilter(
             val sessionId = parts[1]
 
             // get user with session id
-            val userId = userInformationService.getUserIdBySession(sessionId)
+            val userId = userInformationService.getUserIdBySession(sessionId) ?: return
+            val calendarConnection = googleCalendarConnectionService.getCalendarConnection(userId)
 
             val authorizedClient = OAuth2AuthorizedClient(
                 clientRegistration,
-                userId.toString(),
+                calendarConnection.oauth2ConnectionId,
                 tokenResponse.accessToken,
                 tokenResponse.refreshToken
             )
 
             val authentication = UsernamePasswordAuthenticationToken(
-                userId.toString(),
+                calendarConnection.oauth2ConnectionId,
                 null
             )
 

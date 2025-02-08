@@ -41,7 +41,8 @@ class GoogleCalendarConnectionService (
 
         val newGoogleCalendarConnection = GoogleCalendarConnection(
             userInformationId = userInformationId,
-            keyword = creationDto.keyword,
+            keywordStart = creationDto.keywordStart,
+            keywordEnd = creationDto.keywordEnd,
         )
 
         return googleCalendarConnectionRepository.save(newGoogleCalendarConnection)
@@ -59,7 +60,7 @@ class GoogleCalendarConnectionService (
 
         if (!updateDto.hasChanged(calendarConnection)) return null
 
-        calendarConnection.keyword = updateDto.keyword
+        calendarConnection.keywordStart = updateDto.keyword
 
         val updatedCalendarConnection = googleCalendarConnectionRepository.save(calendarConnection)
 

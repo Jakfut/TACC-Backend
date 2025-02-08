@@ -13,7 +13,7 @@ class TeslaClientTests {
     private lateinit var teslaConnectionFactory: TeslaConnectionFactory
 
     private val teslaConnectionClient by lazy { teslaConnectionFactory.createTeslaConnectionClient(
-        UUID.fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8")) }
+        UUID.fromString("e50d926b-f45d-4c0a-9345-0536c04b8162")) }
 
     @Autowired
     private lateinit var tessieConnectionClient: TessieConnectionClient

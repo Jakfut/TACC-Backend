@@ -2,24 +2,32 @@ package at.szybbs.tacc.taccbackend
 
 import at.szybbs.tacc.taccbackend.service.SchedulerService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.Instant
 import java.util.*
 import kotlin.test.Test
 
 @SpringBootTest
-class AcRunnableTests {
+class LocationRunnableTests {
     @Autowired
     private lateinit var schedulerService: SchedulerService
 
+    @Value("\${scheduling.time.unit}")
+    private val timeUnit = ""
+
+    private val multiplier by lazy { if (timeUnit == "seconds") 1 else 60 }
+
     @Test
     fun scheduleAcOn() {
-        schedulerService.scheduleAc(
+        schedulerService.scheduleLocation(
             UUID.fromString("e50d926b-f45d-4c0a-9345-0536c04b8162"),
             true,
+            Instant.now().plusSeconds(60L * multiplier), // the event is in one hour
+            "Ybbs an der Donau, Österreich",
             Instant.now().plusSeconds(4)
         )
 
-        Thread.sleep(20000) // spring would end the test before the scheduled task is executed
+        Thread.sleep(1000 * 60 * 60) // spring would end the test before the scheduled task is executed
     }
 }

@@ -16,7 +16,7 @@ class RefreshSchedules(
 ) {
     private val logger = LoggerFactory.getLogger(RefreshSchedules::class.java)
 
-    @Scheduled(cron = "0 30 1 * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     fun refreshSchedules() {
         logger.info("Refreshing schedules")
 
