@@ -1,4 +1,4 @@
-package at.szybbs.tacc.taccbackend.runnable
+package at.szybbs.tacc.taccbackend.job
 
 import at.szybbs.tacc.taccbackend.factory.CalendarConnectionFactory
 import at.szybbs.tacc.taccbackend.service.SchedulerService

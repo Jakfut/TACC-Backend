@@ -1,4 +1,4 @@
-package at.szybbs.tacc.taccbackend.runnable.locationRunnable
+package at.szybbs.tacc.taccbackend.job
 
 import at.szybbs.tacc.taccbackend.client.TaccDirections
 import at.szybbs.tacc.taccbackend.service.SchedulerService

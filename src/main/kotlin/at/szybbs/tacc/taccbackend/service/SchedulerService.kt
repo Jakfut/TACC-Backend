@@ -1,7 +1,8 @@
 package at.szybbs.tacc.taccbackend.service
 
-import at.szybbs.tacc.taccbackend.runnable.acRunnable.AcJob
-import at.szybbs.tacc.taccbackend.runnable.locationRunnable.LocationJob
+import at.szybbs.tacc.taccbackend.entity.ScheduleEntry
+import at.szybbs.tacc.taccbackend.job.AcJob
+import at.szybbs.tacc.taccbackend.job.LocationJob
 import org.quartz.JobBuilder
 import org.quartz.JobKey
 import org.quartz.Scheduler
@@ -63,6 +64,22 @@ class SchedulerService(
         val locationJobs = scheduler.getJobKeys(locationGroupMatcher).filter { it.name.contains(userId.toString()) }
 
         return acJobs + locationJobs
+    }
+
+    fun getScheduleEntries(userId: UUID): List<ScheduleEntry> {
+        val jobs = getScheduledJobsForUser(userId)
+
+        return jobs.map {
+            val jobDetail = scheduler.getJobDetail(it)
+            val trigger = scheduler.getTriggersOfJob(it).first()
+
+            ScheduleEntry(
+                trigger.nextFireTime.toInstant(),
+                jobDetail.key.group,
+                jobDetail.key.group == "acGroup",
+                jobDetail.key.group == "locationGroup",
+            )
+        }
     }
 
     fun unscheduleJob(jobKey: JobKey) {

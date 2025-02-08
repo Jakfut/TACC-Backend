@@ -1,4 +1,4 @@
-package at.szybbs.tacc.taccbackend.runnable.acRunnable
+package at.szybbs.tacc.taccbackend.job
 
 import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
 import org.quartz.Job
