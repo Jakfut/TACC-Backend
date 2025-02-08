@@ -24,11 +24,11 @@ import java.util.*
 @Scope("prototype")
 class GoogleConnectionClient(
     authorizedClientManager: AuthorizedClientServiceOAuth2AuthorizedClientManager,
-    googleCalendarConnectionService: GoogleCalendarConnectionService
+    googleCalendarConnectionService: GoogleCalendarConnectionService,
 ): CalendarConnectionClient {
     override lateinit var userId: UUID
 
-    private val keyword: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).keyword }
+    private val keyword: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).keywordStart }
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -43,6 +43,8 @@ class GoogleConnectionClient(
         })
         .build()
 
+    private val oauth2ConnectionId: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).oauth2ConnectionId }
+
     override fun getType(): CalendarType {
         return CalendarType.GOOGLE_CALENDAR
     }
@@ -51,7 +53,7 @@ class GoogleConnectionClient(
         val result = restClient.get()
             .uri("/users/me/calendarList")
             .attributes(clientRegistrationId("google"))
-            .attributes(principal(userId.toString()))
+            .attributes(principal(oauth2ConnectionId))
             .exchange{ _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     response.bodyTo(GoogleCalendarListResponse::class.java)
@@ -68,7 +70,7 @@ class GoogleConnectionClient(
         val result = restClient.get()
             .uri("/calendars/$calendarId/events?timeMin=${timeMin}")
             .attributes(clientRegistrationId("google"))
-            .attributes(principal(userId.toString()))
+            .attributes(principal(oauth2ConnectionId))
             .exchange{ _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     response.bodyTo(GoogleCalendarEventsResponse::class.java)
@@ -85,7 +87,7 @@ class GoogleConnectionClient(
         val result = restClient.get()
             .uri("/calendars/$calendarId/events?q=$keyword&timeMin=${timeMin}")
             .attributes(clientRegistrationId("google"))
-            .attributes(principal(userId.toString()))
+            .attributes(principal(oauth2ConnectionId))
             .exchange{ _, response ->
                 if (response.statusCode.is2xxSuccessful) {
                     response.bodyTo(GoogleCalendarEventsResponse::class.java)

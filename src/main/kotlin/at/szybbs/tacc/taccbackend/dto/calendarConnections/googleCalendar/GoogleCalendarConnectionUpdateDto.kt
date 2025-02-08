@@ -7,6 +7,6 @@ data class GoogleCalendarConnectionUpdateDto(
     val keyword: String,
 ) : CalendarConnectionUpdateDto<GoogleCalendarConnection> {
     override fun hasChanged(calendarConnection: GoogleCalendarConnection): Boolean {
-        return calendarConnection.keyword != keyword
+        return calendarConnection.keywordStart != keyword
     }
 }

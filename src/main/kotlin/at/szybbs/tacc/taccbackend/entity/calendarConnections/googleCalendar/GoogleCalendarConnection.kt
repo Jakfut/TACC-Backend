@@ -25,17 +25,24 @@ data class GoogleCalendarConnection(
     @JsonIgnore
     override var userInformation: UserInformation? = null,
 
+    @Column(name= "oauth2_connection_id", unique = true)
+    val oauth2ConnectionId: String = UUID.randomUUID().toString(),
+
     @Column(name = "email")
     var email: String? = null,
 
-    @Column(name = "keyword", nullable = false)
-    var keyword: String,
+    @Column(name = "keywordStart", nullable = false)
+    var keywordStart: String,
+
+    @Column(name = "keywordEnd", nullable = false)
+    var keywordEnd: String,
 ) : CalendarConnection {
     override fun toResponseDto(): GoogleCalendarConnectionResponseDto {
         return GoogleCalendarConnectionResponseDto(
             userInformationId = this.userInformationId,
             email = this.email,
-            keyword = this.keyword
+            keywordStart = this.keywordStart,
+            keywordEnd = this.keywordEnd,
         )
     }
 }

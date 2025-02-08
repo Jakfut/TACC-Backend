@@ -2,6 +2,7 @@ package at.szybbs.tacc.taccbackend.entity
 
 import jakarta.persistence.*
 import java.time.Instant
+import java.util.*
 
 @Entity
 @Table(name = "oauth2_authorized_client")

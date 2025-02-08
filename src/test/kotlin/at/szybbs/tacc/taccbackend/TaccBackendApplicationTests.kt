@@ -1,11 +1,15 @@
 package at.szybbs.tacc.taccbackend
 
 
+import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarConnectionCreationDto
 import at.szybbs.tacc.taccbackend.dto.teslaConnections.tessie.TessieConnectionCreationDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
+import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnectionType
+import at.szybbs.tacc.taccbackend.repository.calendarConnections.GoogleCalendarConnectionRepository
 import at.szybbs.tacc.taccbackend.repository.teslaConnections.TessieConnectionRepository
 import at.szybbs.tacc.taccbackend.service.UserInformationService
+import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +28,7 @@ import java.util.UUID
 
 @SpringBootTest
 class TaccBackendApplicationTests {
-	val userId = "c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"
+	val userId = "e50d926b-f45d-4c0a-9345-0536c04b8162"
 
 	@Autowired
 	lateinit var authorizedClientService: JdbcOAuth2AuthorizedClientService
@@ -44,6 +48,12 @@ class TaccBackendApplicationTests {
 	@Autowired
 	lateinit var tessieConnectionRepository: TessieConnectionRepository
 
+	@Autowired
+	lateinit var googleCalendarConnectionService: GoogleCalendarConnectionService
+
+	@Autowired
+	lateinit var googleConnectionRepository: GoogleCalendarConnectionRepository
+
 	@Test
 	fun addUserInformation() {
 		val userInformationId = UUID.randomUUID()
@@ -58,14 +68,27 @@ class TaccBackendApplicationTests {
 	 fun addTeslaConnection(){
 		val userInformationId = UUID.fromString(userId)
 		val creationDto = TessieConnectionCreationDto(
-			"?",
-			"?",
+			"XP7YGCEK0RB287024",
+			"G5syNn9aFZvHafitnCpTBSzzCO08nWcA",
 		)
 
 		tessieConnectionService.createTeslaConnection(userInformationId, creationDto)
 
 	 	userInformationService.setActiveTeslaConnectionType(userInformationId, TeslaConnectionType.TESSIE, tessieConnectionRepository)
 	 }
+
+	@Test
+	fun addGoogleCalendarConnection(){
+		val userInformationId = UUID.fromString(userId)
+		val creationDto = GoogleCalendarConnectionCreationDto(
+			"#start",
+			"#end",
+		)
+
+		googleCalendarConnectionService.createCalendarConnection(userInformationId, creationDto)
+
+		userInformationService.setActiveCalendarConnectionType(userInformationId, CalendarType.GOOGLE_CALENDAR, googleConnectionRepository)
+	}
 
 	@Test
 	fun setActiveTeslaConnection(){

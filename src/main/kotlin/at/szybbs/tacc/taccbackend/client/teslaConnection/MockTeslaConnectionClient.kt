@@ -32,12 +32,12 @@ class MockTeslaConnectionClient : TeslaConnectionClient {
 
         logger.info("Getting mock location for hour $hour")
 
-        when (hour) {
+        /*when (hour) {
             in 0..6 -> return "Feichsen 27"
             in 7..12 -> return "Wien"
             in 13..18 -> return "Feichsen 27"
             in 19..23 -> return "Feichsen 27"
-        }
+        }*/
         return "Feichsen 27"
     }
 
