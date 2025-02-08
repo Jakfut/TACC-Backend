@@ -22,10 +22,12 @@ class SchedulerTests {
 
     private val multiplier by lazy { if (timeUnit == "seconds") 1 else 60 }
 
+    private val userId = "e50d926b-f45d-4c0a-9345-0536c04b8162"
+
     @Test
     fun scheduleAcOn() {
         schedulerService.scheduleLocation(
-            UUID.fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"),
+            UUID.fromString(userId),
             true,
             Instant.now().plusSeconds(60L * multiplier), // the event is in one hour
             "Ybbs an der Donau, Österreich",
@@ -38,7 +40,7 @@ class SchedulerTests {
     @Test
     fun getTasksOfUser() {
         schedulerService.scheduleLocation(
-            UUID.fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"),
+            UUID.fromString(userId),
             true,
             Instant.now().plusSeconds(60L * 60L), // the event is in one hour
             "Ybbs an der Donau, Österreich",
@@ -46,7 +48,7 @@ class SchedulerTests {
         )
 
         schedulerService.scheduleLocation(
-            UUID.fromString("4b8712d8-47dd-40bf-b466-3e7e2c64b785"),
+            UUID.fromString(userId),
             true,
             Instant.now().plusSeconds(60L * 60L), // the event is in one hour
             "Ybbs an der Donau, Österreich",
@@ -58,7 +60,7 @@ class SchedulerTests {
         scheduler
             .getTriggersOfJob(schedulerService
                 .getScheduledJobsForUser(UUID
-                    .fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8")).first()).forEach {
+                    .fromString(userId)).first()).forEach {
                 println(it.nextFireTime)
             }
     }
@@ -66,15 +68,21 @@ class SchedulerTests {
     @Test
     fun getScheduleEntries() {
         schedulerService.scheduleLocation(
-            UUID.fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"),
+            UUID.fromString(userId),
             true,
             Instant.now().plusSeconds(60L * 60L), // the event is in one hour
             "Ybbs an der Donau, Österreich",
             Instant.now().plusSeconds(4)
         )
 
+        schedulerService.scheduleAc(
+            UUID.fromString(userId),
+            true,
+            Instant.now().plusSeconds(60L * 60L), // the event is in one hour
+        )
+
         schedulerService.scheduleLocation(
-            UUID.fromString("4b8712d8-47dd-40bf-b466-3e7e2c64b785"),
+            UUID.fromString("24867593-837b-4eda-86c9-199e1b03d229"),
             true,
             Instant.now().plusSeconds(60L * 60L), // the event is in one hour
             "Ybbs an der Donau, Österreich",
@@ -83,7 +91,7 @@ class SchedulerTests {
 
         Thread.sleep(1000 * 6)
 
-        val result = schedulerService.getScheduleEntries(UUID.fromString("c8e2ceb5-f691-4952-a8d6-2a7e796cfbb8"))
+        val result = schedulerService.getScheduleEntries(UUID.fromString(userId))
 
         result.forEach {
             println(it)

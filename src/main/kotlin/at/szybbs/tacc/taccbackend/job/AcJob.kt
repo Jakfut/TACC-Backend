@@ -9,7 +9,6 @@ import java.util.*
 
 @Component
 class AcJob : Job {
-
     @Autowired
     private lateinit var teslaConnectionFactory: TeslaConnectionFactory
 

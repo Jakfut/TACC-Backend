@@ -75,7 +75,8 @@ class SchedulerService(
 
             ScheduleEntry(
                 trigger.nextFireTime.toInstant(),
-                jobDetail.key.group,
+                (jobDetail.jobDataMap.get("eventTime") as? Long)?.let { Instant.ofEpochMilli(it) },
+                jobDetail.jobDataMap.getString("tarLocation") ?: "",
                 jobDetail.key.group == "acGroup",
                 jobDetail.key.group == "locationGroup",
             )
