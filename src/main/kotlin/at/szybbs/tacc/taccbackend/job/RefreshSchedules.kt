@@ -22,28 +22,37 @@ class RefreshSchedules(
 
         val allUsers = userInformationService.getUserInformation()
 
-        allUsers.forEach {
-            val user = it
+        allUsers.forEach { user ->
             logger.info("Refreshing schedules for user ${user.id}")
             val calendarClient = calendarConnectionFactory.createCalendarConnectionClient(user.id)
 
-            val allEvents = calendarClient.getAllEventsWithKeyword(Instant.now())
+            val allEventsStart = calendarClient.getAllEventsWithKeywordStart(Instant.now())
+            val allEventsEnd = calendarClient.getAllEventsWithKeywordEnd(Instant.now())
 
-            allEvents.forEach {
+            allEventsStart.forEach {
                 if (it.location != null) {
                     schedulerService.scheduleLocation(
                         user.id,
                         true,
                         it.start,
                         it.location,
-                        it.start.minusSeconds(60 * 60 * 2) // check again 2 hours before the start of the event
+                        Instant.now()
                     )
+                } else {
                     schedulerService.scheduleAc(
                         user.id,
                         true,
-                        it.end.minusSeconds(60 * 5) // activate AC 5 minutes before the end of the event ends
+                        it.start.minusSeconds(user.noDestMinutes * 60L) // activate AC noDestMinutes before the event starts
                     )
                 }
+            }
+
+            allEventsEnd.forEach {
+                schedulerService.scheduleAc(
+                    user.id,
+                    true,
+                    it.end.minusSeconds(60 * 5) // activate AC 5 minutes before the end of the event ends
+                )
             }
         }
 

@@ -11,6 +11,7 @@ interface CalendarConnectionClient {
     fun getType(): CalendarType
     fun getCalendarIdList(): List<String>
     fun getEvents(calendarId: String, timeMin: Instant): List<CalendarEvent>
-    fun getEventWithKeyword(calendarId: String, timeMin: Instant): List<CalendarEvent>
-    fun getAllEventsWithKeyword(timeMin: Instant): List<CalendarEvent>
+    fun getEventWithKeyword(calendarId: String, timeMin: Instant, keyword: String): List<CalendarEvent>
+    fun getAllEventsWithKeywordStart(timeMin: Instant): List<CalendarEvent>
+    fun getAllEventsWithKeywordEnd(timeMin: Instant): List<CalendarEvent>
 }

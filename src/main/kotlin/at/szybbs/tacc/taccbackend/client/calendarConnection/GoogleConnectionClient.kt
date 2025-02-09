@@ -28,7 +28,8 @@ class GoogleConnectionClient(
 ): CalendarConnectionClient {
     override lateinit var userId: UUID
 
-    private val keyword: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).keywordStart }
+    private val keywordStart: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).keywordStart }
+    private val keywordEnd: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).keywordEnd }
 
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
@@ -83,7 +84,7 @@ class GoogleConnectionClient(
         return result?.items?.map { mapGoogleToCalendarEvent(it) } ?: emptyList()
     }
 
-    override fun getEventWithKeyword(calendarId: String, timeMin: Instant): List<CalendarEvent> {
+    override fun getEventWithKeyword(calendarId: String, timeMin: Instant, keyword: String): List<CalendarEvent> {
         val result = restClient.get()
             .uri("/calendars/$calendarId/events?q=$keyword&timeMin=${timeMin}")
             .attributes(clientRegistrationId("google"))
@@ -100,8 +101,13 @@ class GoogleConnectionClient(
         return result?.items?.map { mapGoogleToCalendarEvent(it) } ?: emptyList()
     }
 
-    override fun getAllEventsWithKeyword(timeMin: Instant): List<CalendarEvent> {
+    override fun getAllEventsWithKeywordStart(timeMin: Instant): List<CalendarEvent> {
         val calendarIdList = getCalendarIdList()
-        return calendarIdList.flatMap { getEventWithKeyword(it, timeMin) }
+        return calendarIdList.flatMap { getEventWithKeyword(it, timeMin, keywordStart) }
+    }
+
+    override fun getAllEventsWithKeywordEnd(timeMin: Instant): List<CalendarEvent> {
+        val calendarIdList = getCalendarIdList()
+        return calendarIdList.flatMap { getEventWithKeyword(it, timeMin, keywordEnd) }
     }
 }
