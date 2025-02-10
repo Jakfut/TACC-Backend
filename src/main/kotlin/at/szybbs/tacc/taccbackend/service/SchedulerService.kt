@@ -8,6 +8,8 @@ import org.quartz.JobKey
 import org.quartz.Scheduler
 import org.quartz.TriggerBuilder
 import org.quartz.impl.matchers.GroupMatcher
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -19,6 +21,8 @@ class SchedulerService(
     private val scheduler: Scheduler,
     private val userInformationService: UserInformationService,
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(javaClass)
+
     fun scheduleAc(userId: UUID, targetState: Boolean, instant: Instant) {
         val jobDetail = JobBuilder.newJob(AcJob::class.java)
             .withIdentity("acJob-$userId", "acGroup")
@@ -39,6 +43,11 @@ class SchedulerService(
     }
 
     fun scheduleAcWithRuntime(userId: UUID, instant: Instant) {
+        if (checkForSimilarJob(userId, "acGroup", instant)) {
+            logger.info("Skipping scheduling of AC job for user $userId at $instant because there is already a similar job")
+            return // Skip if there is already a similar job
+        }
+
         val user = userInformationService.getUserInformation(userId)
 
         if (user.ccRuntimeMinutes == 0) { // User has no runtime set
@@ -54,6 +63,11 @@ class SchedulerService(
     }
 
     fun scheduleLocation(userId: UUID, targetState: Boolean, eventTime: Instant, tarLocation: String, instant: Instant) {
+        if (checkForSimilarJob(userId, "locationGroup", eventTime, tarLocation)) {
+            logger.info("Skipping scheduling of Location job for user $userId at $eventTime because there is already a similar job")
+            return // Skip if there is already a similar job
+        }
+
         val jobDetail = JobBuilder.newJob(LocationJob::class.java)
             .withIdentity("locationJob-$userId-${eventTime.toEpochMilli()}", "locationGroup") // Unique ID!
             .usingJobData("userId", userId.toString())
@@ -101,7 +115,7 @@ class SchedulerService(
         }
     }
 
-    fun checkForSimilarJob(userId: UUID, group: String, instant: Instant, eventTime: Instant? = null, tarLocation: String? = null): Boolean {
+    fun checkForSimilarJob(userId: UUID, group: String, eventTime: Instant? = null, tarLocation: String? = null): Boolean {
         val jobKeys = getScheduledJobsForUser(userId)
         val fiveMinutes = 5L * 60L // 5 minutes in seconds
 
@@ -118,7 +132,7 @@ class SchedulerService(
                 when (group) {
                     "acGroup" -> {
                         // Check if the job is scheduled within 5 minutes of the given instant
-                        if (ChronoUnit.SECONDS.between(instant, nextFireTime).absoluteValue <= fiveMinutes) {
+                        if (ChronoUnit.SECONDS.between(eventTime, nextFireTime).absoluteValue <= fiveMinutes) {
                             return true // Found a similar AC job
                         }
                     }

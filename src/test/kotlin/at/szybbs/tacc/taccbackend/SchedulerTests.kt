@@ -110,7 +110,7 @@ class SchedulerTests {
 
         Thread.sleep(1000 * 2)
 
-        val result = schedulerService.checkForSimilarJob(UUID.fromString(userId), "locationGroup", Instant.now().minusSeconds(60L), Instant.now().plusSeconds(60L * 60L), "Ybbs an der Donau, Österreich")
+        val result = schedulerService.checkForSimilarJob(UUID.fromString(userId), "locationGroup", Instant.now().plusSeconds(60L * 60L), "Ybbs an der Donau, Österreich")
 
         assert(result)
     }
