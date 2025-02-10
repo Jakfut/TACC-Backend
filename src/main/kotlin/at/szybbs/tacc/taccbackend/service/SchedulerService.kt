@@ -15,6 +15,7 @@ import java.util.*
 @Service
 class SchedulerService(
     private val scheduler: Scheduler,
+    private val userInformationService: UserInformationService,
 ) {
     fun scheduleAc(userId: UUID, targetState: Boolean, instant: Instant) {
         val jobDetail = JobBuilder.newJob(AcJob::class.java)
@@ -33,6 +34,21 @@ class SchedulerService(
             scheduler.deleteJob(jobDetail.key) // unschedule if exists
         }
         scheduler.scheduleJob(jobDetail, trigger)
+    }
+
+    fun scheduleAcWithRuntime(userId: UUID, instant: Instant) {
+        val user = userInformationService.getUserInformation(userId)
+
+        if (user.ccRuntimeMinutes == 0) { // User has no runtime set
+            scheduleAc(userId, true, instant)
+            return
+        }
+
+        for (i in 0 until user.ccRuntimeMinutes / 5){
+            scheduleAc(userId, true, instant.plusSeconds(i.toLong() * 5 * 60))
+        }
+
+        scheduleAc(userId, false, instant.plusSeconds(user.ccRuntimeMinutes.toLong() * 60))
     }
 
     fun scheduleLocation(userId: UUID, targetState: Boolean, eventTime: Instant, tarLocation: String, instant: Instant) {

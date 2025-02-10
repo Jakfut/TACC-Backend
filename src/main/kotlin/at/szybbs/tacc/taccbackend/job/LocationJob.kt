@@ -43,7 +43,7 @@ class LocationJob : Job {
             }
             in 0..15 -> {
                 logger.info("Inserted into AcRunnable with timeDifference: $timeDifference")
-                schedulerService.scheduleAc(userId, targetState, Instant.now().plusSeconds(timeDifference * multiplier))
+                schedulerService.scheduleAcWithRuntime(userId, Instant.now().plusSeconds(timeDifference * multiplier))
             }
             in 16..60 -> {
                 logger.info("Inserted into LocationRunnable, check again in 15 $timeUnit")

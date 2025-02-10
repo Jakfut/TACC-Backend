@@ -30,7 +30,7 @@ class RefreshSchedules(
             val allEventsEnd = calendarClient.getAllEventsWithKeywordEnd(Instant.now())
 
             allEventsStart.forEach {
-                if (it.location != null) {
+                if (it.location != null) { // Event has a location
                     schedulerService.scheduleLocation(
                         user.id,
                         true,
@@ -38,19 +38,17 @@ class RefreshSchedules(
                         it.location,
                         Instant.now()
                     )
-                } else {
-                    schedulerService.scheduleAc(
+                } else { // Event has no location
+                    schedulerService.scheduleAcWithRuntime(
                         user.id,
-                        true,
                         it.start.minusSeconds(user.noDestMinutes * 60L) // activate AC noDestMinutes before the event starts
                     )
                 }
             }
 
-            allEventsEnd.forEach {
-                schedulerService.scheduleAc(
+            allEventsEnd.forEach { // end of event
+                schedulerService.scheduleAcWithRuntime(
                     user.id,
-                    true,
                     it.end.minusSeconds(60 * 5) // activate AC 5 minutes before the end of the event ends
                 )
             }
