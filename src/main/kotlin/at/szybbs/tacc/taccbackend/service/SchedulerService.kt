@@ -10,7 +10,9 @@ import org.quartz.TriggerBuilder
 import org.quartz.impl.matchers.GroupMatcher
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.time.temporal.ChronoUnit
 import java.util.*
+import kotlin.math.absoluteValue
 
 @Service
 class SchedulerService(
@@ -97,6 +99,45 @@ class SchedulerService(
                 jobDetail.key.group == "locationGroup",
             )
         }
+    }
+
+    fun checkForSimilarJob(userId: UUID, group: String, instant: Instant, eventTime: Instant? = null, tarLocation: String? = null): Boolean {
+        val jobKeys = getScheduledJobsForUser(userId)
+        val fiveMinutes = 5L * 60L // 5 minutes in seconds
+
+        for (jobKey in jobKeys) {
+            if (jobKey.group != group) continue  // Skip jobs from other groups
+
+            val jobDetail = scheduler.getJobDetail(jobKey)
+            val triggers = scheduler.getTriggersOfJob(jobKey)
+
+            for (trigger in triggers) { // usually only one trigger
+                if (trigger.nextFireTime == null) continue
+                val nextFireTime = trigger.nextFireTime.toInstant()
+
+                when (group) {
+                    "acGroup" -> {
+                        // Check if the job is scheduled within 5 minutes of the given instant
+                        if (ChronoUnit.SECONDS.between(instant, nextFireTime).absoluteValue <= fiveMinutes) {
+                            return true // Found a similar AC job
+                        }
+                    }
+                    "locationGroup" -> {
+                        // Check for same location and start time
+                        if(eventTime != null && tarLocation != null){
+                            val jobEventTime = (jobDetail.jobDataMap.get("eventTime") as? Long)?.let { Instant.ofEpochMilli(it) }
+                            val jobTarLocation = jobDetail.jobDataMap.getString("tarLocation")
+
+                            if (ChronoUnit.SECONDS.between(jobEventTime, eventTime).absoluteValue <= fiveMinutes && jobTarLocation == tarLocation) {
+                                return true // Found a similar Location job
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return false // No similar job found
     }
 
     fun unscheduleJob(jobKey: JobKey) {

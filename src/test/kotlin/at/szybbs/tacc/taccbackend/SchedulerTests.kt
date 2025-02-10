@@ -97,4 +97,21 @@ class SchedulerTests {
             println(it)
         }
     }
+
+    @Test
+    fun checkForSimilarJobs() {
+        schedulerService.scheduleLocation(
+            UUID.fromString(userId),
+            true,
+            Instant.now().plusSeconds(60L * 60L), // the event is in one hour
+            "Ybbs an der Donau, Österreich",
+            Instant.now().plusSeconds(4)
+        )
+
+        Thread.sleep(1000 * 2)
+
+        val result = schedulerService.checkForSimilarJob(UUID.fromString(userId), "locationGroup", Instant.now().minusSeconds(60L), Instant.now().plusSeconds(60L * 60L), "Ybbs an der Donau, Österreich")
+
+        assert(result)
+    }
 }
