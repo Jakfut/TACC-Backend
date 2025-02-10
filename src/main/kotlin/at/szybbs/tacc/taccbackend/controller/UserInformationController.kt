@@ -3,6 +3,8 @@ package at.szybbs.tacc.taccbackend.controller
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationUpdateDefaultValuesDto
+import at.szybbs.tacc.taccbackend.entity.ScheduleEntry
+import at.szybbs.tacc.taccbackend.service.SchedulerService
 import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -18,8 +20,9 @@ import java.util.*
 
 @RestController
 @RequestMapping("/api/user/{user-information-id}")
-class UserInformationController (
-    private val userInformationService: UserInformationService
+class UserInformationController(
+    private val userInformationService: UserInformationService,
+    private val schedulerService: SchedulerService
 ) {
 
     @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
@@ -101,5 +104,15 @@ class UserInformationController (
             .toResponseDto()
 
         return ResponseEntity.ok(responseDto)
+    }
+
+    @GetMapping("/scheduled-entries")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
+    fun getScheduleEntries(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ): ResponseEntity<List<ScheduleEntry>> {
+        val scheduledEntries = schedulerService.getScheduleEntries(userInformationId)
+
+        return ResponseEntity.ok(scheduledEntries)
     }
 }

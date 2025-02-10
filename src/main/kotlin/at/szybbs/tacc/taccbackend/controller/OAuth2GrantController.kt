@@ -20,7 +20,7 @@ class OAuth2GrantController(
     ): String {
         val generatedSession = UUID.randomUUID().toString()
 
-        userInformationService.setOauth2Session(userInformationId,generatedSession)
+        userInformationService.setOauth2Session(userInformationId, generatedSession)
 
         return "https://tacc.jakfut.at/oauth2/authorization/google?session_id=$generatedSession"
     }
