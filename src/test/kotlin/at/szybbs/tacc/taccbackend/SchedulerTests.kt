@@ -96,6 +96,8 @@ class SchedulerTests {
         result.forEach {
             println(it)
         }
+
+        assert(result.isNotEmpty())
     }
 
     @Test
