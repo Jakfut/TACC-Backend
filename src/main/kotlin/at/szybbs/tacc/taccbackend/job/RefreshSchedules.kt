@@ -1,4 +1,4 @@
-package at.szybbs.tacc.taccbackend.runnable
+package at.szybbs.tacc.taccbackend.job
 
 import at.szybbs.tacc.taccbackend.factory.CalendarConnectionFactory
 import at.szybbs.tacc.taccbackend.service.SchedulerService
@@ -22,28 +22,35 @@ class RefreshSchedules(
 
         val allUsers = userInformationService.getUserInformation()
 
-        allUsers.forEach {
-            val user = it
+        allUsers.forEach { user ->
             logger.info("Refreshing schedules for user ${user.id}")
             val calendarClient = calendarConnectionFactory.createCalendarConnectionClient(user.id)
 
-            val allEvents = calendarClient.getAllEventsWithKeyword(Instant.now())
+            val allEventsStart = calendarClient.getAllEventsWithKeywordStart(Instant.now())
+            val allEventsEnd = calendarClient.getAllEventsWithKeywordEnd(Instant.now())
 
-            allEvents.forEach {
-                if (it.location != null) {
+            allEventsStart.forEach {
+                if (it.location != null) { // Event has a location
                     schedulerService.scheduleLocation(
                         user.id,
                         true,
                         it.start,
                         it.location,
-                        it.start.minusSeconds(60 * 60 * 2) // check again 2 hours before the start of the event
+                        Instant.now()
                     )
-                    schedulerService.scheduleAc(
+                } else { // Event has no location
+                    schedulerService.scheduleAcWithRuntime(
                         user.id,
-                        true,
-                        it.end.minusSeconds(60 * 5) // activate AC 5 minutes before the end of the event ends
+                        it.start.minusSeconds(user.noDestMinutes * 60L) // activate AC noDestMinutes before the event starts
                     )
                 }
+            }
+
+            allEventsEnd.forEach { // end of event
+                schedulerService.scheduleAcWithRuntime(
+                    user.id,
+                    it.end.minusSeconds(60 * 5) // activate AC 5 minutes before the end of the event ends
+                )
             }
         }
 

@@ -4,7 +4,6 @@ import at.szybbs.tacc.taccbackend.client.teslaConnection.TessieConnectionClient
 import at.szybbs.tacc.taccbackend.factory.TeslaConnectionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.ApplicationContext
 import java.util.*
 import kotlin.test.Test
 
@@ -13,11 +12,11 @@ class TeslaClientTests {
     @Autowired
     private lateinit var teslaConnectionFactory: TeslaConnectionFactory
 
-    @Autowired
-    private lateinit var applicationContext: ApplicationContext
-
     private val teslaConnectionClient by lazy { teslaConnectionFactory.createTeslaConnectionClient(
         UUID.fromString("e50d926b-f45d-4c0a-9345-0536c04b8162")) }
+
+    @Autowired
+    private lateinit var tessieConnectionClient: TessieConnectionClient
 
     @Test
     fun wake() {
@@ -73,7 +72,7 @@ class TeslaClientTests {
 
     @Test
     fun testConnection() {
-        val result = applicationContext.getBean(TessieConnectionClient::class.java).testConnection("", "")
+        val result = tessieConnectionClient.testConnection("?", "?")
 
         println("Connection: $result")
 

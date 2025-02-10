@@ -56,7 +56,8 @@ class GoogleClientTests {
     fun getCalendarEventsKeyword() {
         val result = calendarConnectionClient.getEventWithKeyword(
             "c77cff268c26de890ebec385cf0a28ecebadec6a39d8d526873af6cefb57d590@group.calendar.google.com",
-            Instant.now().minusSeconds(60 * 60 * 24 * 365)
+            Instant.now().minusSeconds(60 * 60 * 24 * 365),
+            "Test"
         )
 
         println("CalendarEvents: $result")
@@ -66,7 +67,7 @@ class GoogleClientTests {
 
     @Test
     fun getAllCalendarEventsKeyword() {
-        val result = calendarConnectionClient.getAllEventsWithKeyword(
+        val result = calendarConnectionClient.getAllEventsWithKeywordStart(
             Instant.now().minusSeconds(60 * 60 * 24 * 365)
         )
 

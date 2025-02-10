@@ -51,7 +51,7 @@ google:
 
 scheduling:
   time:
-    unit: minutes # use minutes for production, seconds for testing
+    unit: seconds # use minutes for production, seconds for testing
 
 # custom config
 security:
