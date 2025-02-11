@@ -65,24 +65,4 @@ class TeslaController (
 
         return ResponseEntity.ok(newState)
     }
-
-    @GetMapping("/climate/upcoming-activations")
-    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
-    fun getUpcomingActivations(
-        @PathVariable("user-information-id") userInformationId: UUID
-    ): ResponseEntity<List<TeslaClimateActivationResponseDto>> {
-        // TODO: call http-client
-
-        val list = arrayListOf(
-            TeslaClimateActivationResponseDto(
-                climateActivationTime = ZonedDateTime.now(),
-                departureTime = ZonedDateTime.now().plusMinutes(10),
-                arrivalTime = ZonedDateTime.now().plusMinutes(50),
-                eventStartTime = ZonedDateTime.now().plusMinutes(60),
-                eventLocation = "Address"
-            )
-        )
-
-        return ResponseEntity.ok(list)
-    }
 }
