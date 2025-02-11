@@ -1,10 +1,12 @@
 package at.szybbs.tacc.taccbackend.config
 
+import at.szybbs.tacc.taccbackend.client.calendarConnection.getGoogleCalendarEmail
 import at.szybbs.tacc.taccbackend.service.UserInformationService
 import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.context.ApplicationContext
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient
@@ -33,7 +35,8 @@ class TaccOAuth2GrantFilter(
     private val clientRegistrationRepository: ClientRegistrationRepository,
     private val authorizedClientService: JdbcOAuth2AuthorizedClientService,
     private val userInformationService: UserInformationService,
-    private val googleCalendarConnectionService: GoogleCalendarConnectionService
+    private val googleCalendarConnectionService: GoogleCalendarConnectionService,
+    private val applicationContext: ApplicationContext
 ) : OncePerRequestFilter() {
     private val oauth2AccessTokenResponseClient: OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> = RestClientAuthorizationCodeTokenResponseClient()
     private val authorizationRequestRepository: AuthorizationRequestRepository<OAuth2AuthorizationRequest> = HttpSessionOAuth2AuthorizationRequestRepository()
@@ -126,6 +129,10 @@ class TaccOAuth2GrantFilter(
                 authorizedClient,
                 authentication
             )
+
+            val email = getGoogleCalendarEmail(userId, applicationContext)
+
+            googleCalendarConnectionService.setGoogleCalendarEmail(userId, email)
 
             return response.sendRedirect("/authorized/google")
         }

@@ -117,4 +117,11 @@ class GoogleCalendarConnectionService (
 
         return userInformation.activeCalendarConnectionType == CalendarType.GOOGLE_CALENDAR
     }
+
+    fun setGoogleCalendarEmail(userInformationId: UUID, email: String): GoogleCalendarConnection {
+        val googleCalendarConnection = getCalendarConnection(userInformationId)
+        googleCalendarConnection.email = email
+
+        return googleCalendarConnectionRepository.save(googleCalendarConnection)
+    }
 }

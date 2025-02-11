@@ -1,17 +1,21 @@
 package at.szybbs.tacc.taccbackend
 
+import at.szybbs.tacc.taccbackend.client.calendarConnection.getGoogleCalendarEmail
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
 import at.szybbs.tacc.taccbackend.factory.CalendarConnectionFactory
 import at.szybbs.tacc.taccbackend.repository.calendarConnections.GoogleCalendarConnectionRepository
 import at.szybbs.tacc.taccbackend.service.UserInformationService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.ApplicationContext
 import java.time.Instant
 import java.util.*
 import kotlin.test.Test
 
 @SpringBootTest
 class GoogleClientTests {
+    @Autowired
+    private lateinit var applicationContext: ApplicationContext
     val userId = "e50d926b-f45d-4c0a-9345-0536c04b8162"
 
     @Autowired
@@ -72,6 +76,15 @@ class GoogleClientTests {
         )
 
         println("CalendarEvents: $result")
+
+        assert(result.isNotEmpty())
+    }
+
+    @Test
+    fun getGoogleCalendarEmailTest() {
+        val result = getGoogleCalendarEmail(UUID.fromString(userId), applicationContext)
+
+        println("Email: $result")
 
         assert(result.isNotEmpty())
     }

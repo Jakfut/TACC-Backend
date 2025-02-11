@@ -8,6 +8,7 @@ import at.szybbs.tacc.taccbackend.entity.calendarConnections.mapGoogleToCalendar
 import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Scope
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.web.client.OAuth2ClientHttpRequestInterceptor
@@ -16,6 +17,7 @@ import org.springframework.security.oauth2.client.web.client.RequestAttributePri
 import org.springframework.security.oauth2.client.web.client.RequestAttributePrincipalResolver.principal
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
+import org.springframework.web.client.toEntity
 import java.time.Instant
 import java.util.*
 
@@ -110,4 +112,27 @@ class GoogleConnectionClient(
         val calendarIdList = getCalendarIdList()
         return calendarIdList.flatMap { getEventWithKeyword(it, timeMin, keywordEnd) }
     }
+}
+
+fun getGoogleCalendarEmail(userId: UUID, applicationContext: ApplicationContext): String {
+    val googleCalendarConnectionService = applicationContext.getBean(GoogleCalendarConnectionService::class.java)
+    val authorizedClientManager = applicationContext.getBean(AuthorizedClientServiceOAuth2AuthorizedClientManager::class.java)
+
+    val oauth2ConnectionId: String by lazy { googleCalendarConnectionService.getCalendarConnection(userId).oauth2ConnectionId }
+
+    val restClient = RestClient.builder()
+        .defaultHeaders { it.set("Content-Type", "application/json") }
+        .requestInterceptor(OAuth2ClientHttpRequestInterceptor(authorizedClientManager).apply {
+            setPrincipalResolver(RequestAttributePrincipalResolver())
+        })
+        .build()
+
+    val result = restClient.get()
+        .uri("https://www.googleapis.com/oauth2/v3/userinfo")
+        .attributes(clientRegistrationId("google"))
+        .attributes(principal(oauth2ConnectionId))
+        .retrieve()
+        .toEntity<Map<String, String>>()
+
+    return result.body?.get("email") ?: throw Exception("Failed to get email")
 }

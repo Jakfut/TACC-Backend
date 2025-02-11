@@ -25,7 +25,9 @@ spring:
             client-secret: ${GOOGLE_CLIENT_SECRET}
             authorization-grant-type: authorization_code
             redirect-uri: "{baseUrl}/authorized/google"
-            scope: https://www.googleapis.com/auth/calendar.readonly
+            scope:
+              - https://www.googleapis.com/auth/calendar.readonly
+              - email
         provider:
           google:
             issuer-uri: https://accounts.google.com
@@ -51,7 +53,7 @@ google:
 
 scheduling:
   time:
-    unit: seconds # use minutes for production, seconds for testing
+    unit: minutes # use minutes for production, seconds for testing
 
 # custom config
 security:
