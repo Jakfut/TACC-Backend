@@ -101,9 +101,14 @@ class SchedulerService(
     fun getScheduleEntries(userId: UUID): List<ScheduleEntry> {
         val jobs = getScheduledJobsForUser(userId)
 
-        return jobs.map {
+        return jobs.mapNotNull {
             val jobDetail = scheduler.getJobDetail(it)
-            val trigger = scheduler.getTriggersOfJob(it).first()
+            val trigger = scheduler.getTriggersOfJob(it).firstOrNull()
+
+            if (trigger == null) {
+                logger.warn("No trigger found for job ${it.name}")
+                return@mapNotNull null
+            }
 
             ScheduleEntry(
                 trigger.nextFireTime.toInstant(),
