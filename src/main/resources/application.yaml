@@ -8,7 +8,7 @@ spring:
     password: ${DATABASE_PASSWORD}
 
   jpa:
-    show-sql: true         # Log SQL statements (disable in production)
+    show-sql: true        # Log SQL statements (disable in production)
     hibernate:
       ddl-auto: update    # Update database when necessary (set to "update" in production)
     open-in-view: false   # Don't keep JPA session open for whole HTTP request
@@ -61,7 +61,6 @@ security:
     attribute:
       # for encrypting columns
       password: ${ATTRIBUTE_ENCRYPTION_PASSWORD}
-      salt: ${ATTRIBUTE_ENCRYPTION_SALT}
 
   authentication:
     roles:

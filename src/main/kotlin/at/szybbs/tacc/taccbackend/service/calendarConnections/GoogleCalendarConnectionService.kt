@@ -11,6 +11,7 @@ import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import at.szybbs.tacc.taccbackend.exception.calendarConnections.CalendarConnectionValidationException
 import at.szybbs.tacc.taccbackend.repository.calendarConnections.GoogleCalendarConnectionRepository
 import at.szybbs.tacc.taccbackend.service.UserInformationService
+import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -18,6 +19,7 @@ import java.util.*
 class GoogleCalendarConnectionService (
     private val googleCalendarConnectionRepository: GoogleCalendarConnectionRepository,
     private val userInformationService: UserInformationService,
+    private val authorizedClientService: JdbcOAuth2AuthorizedClientService,
 ) {
 
     @Throws(CalendarConnectionNotFoundException::class)
@@ -95,10 +97,14 @@ class GoogleCalendarConnectionService (
     fun disconnectGoogleCalendarApi(userInformationId: UUID) : GoogleCalendarConnection? {
         val calendarConnection = getCalendarConnection(userInformationId)
 
-        if (calendarConnection.email == null) return null
+        val deletionSuccessful = runCatching {
+            authorizedClientService.removeAuthorizedClient("google", calendarConnection.oauth2ConnectionId)
+        }.isSuccess;
+
+        // nothing changed
+        if (calendarConnection.email == null && !deletionSuccessful) return null
 
         calendarConnection.email = null
-        // TODO: delete OAuth2AuthorizedClient entry + adapt to changes of entity
 
         val updatedUserInformation = googleCalendarConnectionRepository.save(calendarConnection)
 

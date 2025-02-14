@@ -1,7 +1,7 @@
 package at.szybbs.tacc.taccbackend.entity.teslaConnections.tessie
 
 import at.szybbs.tacc.taccbackend.dto.teslaConnections.tessie.TessieConnectionResponseDto
-import at.szybbs.tacc.taccbackend.encryption.AttributeEncryptor
+import at.szybbs.tacc.taccbackend.encryption.AttributeEncryptionConverter
 import at.szybbs.tacc.taccbackend.entity.teslaConnections.TeslaConnection
 import at.szybbs.tacc.taccbackend.entity.userInformation.UserInformation
 import com.fasterxml.jackson.annotation.JsonIgnore
@@ -25,11 +25,11 @@ data class TessieConnection(
     @JsonIgnore
     override var userInformation: UserInformation? = null,
 
-    @Convert(converter = AttributeEncryptor::class)
+    @Convert(converter = AttributeEncryptionConverter::class)
     @Column(name = "vin", nullable = false, columnDefinition = "TEXT")
     var vin: String,
 
-    @Convert(converter = AttributeEncryptor::class)
+    @Convert(converter = AttributeEncryptionConverter::class)
     @Column(name = "access_token", nullable = false, columnDefinition = "TEXT")
     var accessToken: String,
 
