@@ -38,19 +38,26 @@ class RefreshSchedules(
                         it.location,
                         Instant.now()
                     )
+                    logger.info("Scheduled location for user ${user.id} at ${it.start}")
                 } else { // Event has no location
                     schedulerService.scheduleAcWithRuntime(
                         user.id,
+                        it.end,
+                        "",
                         it.start.minusSeconds(user.noDestMinutes * 60L) // activate AC noDestMinutes before the event starts
                     )
+                    logger.info("Scheduled AC for user ${user.id} at ${it.start}")
                 }
             }
 
             allEventsEnd.forEach { // end of event
                 schedulerService.scheduleAcWithRuntime(
                     user.id,
+                    it.end,
+                    it.location ?: "",
                     it.end.minusSeconds(60 * 5) // activate AC 5 minutes before the end of the event ends
                 )
+                logger.info("Scheduled AC for user ${user.id} at ${it.end}")
             }
         }
 

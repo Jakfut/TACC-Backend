@@ -68,8 +68,8 @@ class TaccBackendApplicationTests {
 	 fun addTeslaConnection(){
 		val userInformationId = UUID.fromString(userId)
 		val creationDto = TessieConnectionCreationDto(
-			"XP7YGCEK0RB287024",
-			"G5syNn9aFZvHafitnCpTBSzzCO08nWcA",
+			"?",
+			"?",
 		)
 
 		tessieConnectionService.createTeslaConnection(userInformationId, creationDto)

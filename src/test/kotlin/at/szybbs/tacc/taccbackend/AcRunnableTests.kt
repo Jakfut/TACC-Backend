@@ -17,6 +17,8 @@ class AcRunnableTests {
         schedulerService.scheduleAc(
             UUID.fromString("e50d926b-f45d-4c0a-9345-0536c04b8162"),
             true,
+            Instant.now(),
+            "",
             Instant.now().plusSeconds(4)
         )
 
