@@ -14,12 +14,12 @@ import org.springframework.stereotype.Component
 class GoogleCalendarConnectionValidator {
     fun validate(googleCalendarConnection: GoogleCalendarConnection) {
         val keywordStart = googleCalendarConnection.keywordStart
-        if (!keywordStart.matches(Regex("^#[a-zA-Z0-9]{3,5}\$"))) {
+        if (!keywordStart.matches(Regex("[a-zA-Z0-9]{3,8}\$"))) {
             throw CalendarConnectionValidationException("keywordStart", keywordStart)
         }
 
         val keywordEnd = googleCalendarConnection.keywordEnd
-        if (!keywordEnd.matches(Regex("^#[a-zA-Z0-9]{3,5}\$"))) {
+        if (!keywordEnd.matches(Regex("[a-zA-Z0-9]{3,8}\$"))) {
             throw CalendarConnectionValidationException("keywordEnd", keywordEnd)
         }
     }

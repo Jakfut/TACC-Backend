@@ -21,13 +21,14 @@ class SchedulerService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(javaClass)
 
-    fun scheduleAc(userId: UUID, targetState: Boolean, eventTime: Instant, tarLocation: String, instant: Instant) {
+    fun scheduleAc(userId: UUID, targetState: Boolean, eventTime: Instant, tarLocation: String, instant: Instant, isForScheduleEntry: Boolean = false) {
         val jobDetail = JobBuilder.newJob(AcJob::class.java)
             .withIdentity("acJob-$userId-${instant.toEpochMilli()}", "acGroup")
             .usingJobData("userId", userId.toString()) // Pass data to the job
             .usingJobData("targetState", targetState)
             .usingJobData("eventTime", eventTime.toEpochMilli())
             .usingJobData("tarLocation", tarLocation)
+            .usingJobData("isForScheduleEntry", isForScheduleEntry)
             .build()
         val trigger = TriggerBuilder.newTrigger()
             .forJob(jobDetail)
@@ -52,10 +53,13 @@ class SchedulerService(
         }
 
         for (i in 0 until user.ccRuntimeMinutes / 5){
+            if (i == 0) {
+                // The first job should be relevant to the ScheduleEntries
+                scheduleAc(userId, true, eventTime, tarLocation, instant.plusSeconds(i.toLong() * 5 * 60), true)
+            }
+
             scheduleAc(userId, true, eventTime, tarLocation, instant.plusSeconds(i.toLong() * 5 * 60))
         }
-
-        scheduleAc(userId, false, eventTime, tarLocation, instant.plusSeconds(user.ccRuntimeMinutes.toLong() * 60))
     }
 
     fun scheduleLocation(userId: UUID, targetState: Boolean, eventTime: Instant, tarLocation: String, instant: Instant) {
@@ -99,6 +103,13 @@ class SchedulerService(
             if (trigger == null) {
                 logger.warn("No trigger found for job ${it.name}")
                 return@mapNotNull null
+            }
+
+            if (jobDetail.key.group == "acGroup") { // Check if it's an AC Job
+                val isForScheduleEntry = jobDetail.jobDataMap.getBoolean("isForScheduleEntry") // Default to false if not present
+                if (!isForScheduleEntry) { // Skip if isForScheduleEntry is false
+                    return@mapNotNull null
+                }
             }
 
             ScheduleEntry(
