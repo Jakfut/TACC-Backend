@@ -56,6 +56,7 @@ class SchedulerService(
             if (i == 0) {
                 // The first job should be relevant to the ScheduleEntries
                 scheduleAc(userId, true, eventTime, tarLocation, instant.plusSeconds(i.toLong() * 5 * 60), true)
+                continue
             }
 
             scheduleAc(userId, true, eventTime, tarLocation, instant.plusSeconds(i.toLong() * 5 * 60))
@@ -106,7 +107,7 @@ class SchedulerService(
             }
 
             if (jobDetail.key.group == "acGroup") { // Check if it's an AC Job
-                val isForScheduleEntry = jobDetail.jobDataMap.getBoolean("isForScheduleEntry") // Default to false if not present
+                val isForScheduleEntry = jobDetail.jobDataMap.getBoolean("isForScheduleEntry")
                 if (!isForScheduleEntry) { // Skip if isForScheduleEntry is false
                     return@mapNotNull null
                 }

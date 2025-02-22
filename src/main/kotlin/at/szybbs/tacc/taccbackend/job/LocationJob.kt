@@ -39,7 +39,7 @@ class LocationJob : Job {
 
         when (timeDifference) {
             in Int.MIN_VALUE..0 -> {
-                logger.error("TimeDifference is negative")
+                logger.error("TimeDifference is negative: $timeDifference, eventTime: $eventTime, driveTime: $driveTime")
             }
             in 0..15 -> {
                 logger.info("Inserted into AcRunnable with timeDifference: $timeDifference")
