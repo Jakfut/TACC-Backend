@@ -53,6 +53,11 @@ class RefreshSchedules(
                 }
 
                 allEventsEnd.forEach { // end of event
+                    // check if end of event is in the past
+                    if (it.end.isBefore(Instant.now())) {
+                        return@forEach
+                    }
+
                     schedulerService.scheduleAcWithRuntime(
                         user.id,
                         it.end,
