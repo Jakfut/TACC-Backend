@@ -87,9 +87,9 @@ class GoogleConnectionClient(
     }
 
     override fun getEventWithKeyword(calendarId: String, timeMin: Instant, keyword: String): List<CalendarEvent> {
-        logger.info("Getting events with keyword $keyword for calendar $calendarId")
+        logger.info("Getting events with keyword $keyword for calendar $calendarId, user $userId, timeMin: $timeMin")
         val result = restClient.get()
-            .uri("/calendars/$calendarId/events?q=$keyword&timeMin=${timeMin}")
+            .uri("/calendars/$calendarId/events?q=$keyword&singleEvents=true&timeMin=${timeMin}&timeMax=${timeMin.plusSeconds(14 * 24 * 60 * 60)}")
             .attributes(clientRegistrationId("google"))
             .attributes(principal(oauth2ConnectionId))
             .exchange{ _, response ->
@@ -105,13 +105,13 @@ class GoogleConnectionClient(
     }
 
     override fun getAllEventsWithKeywordStart(timeMin: Instant): List<CalendarEvent> {
-        logger.info("Getting all events with keyword $keywordStart for user $userId")
+        logger.info("Getting all events with keyword $keywordStart for user $userId, timeMin: $timeMin")
         val calendarIdList = getCalendarIdList()
         return calendarIdList.flatMap { getEventWithKeyword(it, timeMin, keywordStart) }
     }
 
     override fun getAllEventsWithKeywordEnd(timeMin: Instant): List<CalendarEvent> {
-        logger.info("Getting all events with keyword $keywordEnd for user $userId")
+        logger.info("Getting all events with keyword $keywordEnd for user $userId, timeMin: $timeMin")
         val calendarIdList = getCalendarIdList()
         return calendarIdList.flatMap { getEventWithKeyword(it, timeMin, keywordEnd) }
     }
