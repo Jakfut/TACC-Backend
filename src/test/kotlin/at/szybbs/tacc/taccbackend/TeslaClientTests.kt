@@ -78,4 +78,13 @@ class TeslaClientTests {
 
         assert(result)
     }
+
+    @Test
+    fun testIsUserPresent() {
+        val result = teslaConnectionClient.isUserPresent()
+
+        println("User Present: $result")
+
+        assert(result)
+    }
 }

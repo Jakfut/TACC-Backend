@@ -49,6 +49,7 @@ class SchedulerService(
 
         if (user.ccRuntimeMinutes == 0) { // User has no runtime set
             scheduleAc(userId, true, eventTime, tarLocation, instant, true)
+            scheduleAc(userId, false, eventTime, tarLocation, instant.plusSeconds(5 * 60))
             return
         }
 
@@ -61,6 +62,8 @@ class SchedulerService(
 
             scheduleAc(userId, true, eventTime, tarLocation, instant.plusSeconds(i.toLong() * 5 * 60))
         }
+
+        scheduleAc(userId, false, eventTime, tarLocation, instant.plusSeconds(user.ccRuntimeMinutes.toLong() * 60))
     }
 
     fun scheduleLocation(userId: UUID, targetState: Boolean, eventTime: Instant, tarLocation: String, instant: Instant) {

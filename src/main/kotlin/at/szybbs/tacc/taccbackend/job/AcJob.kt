@@ -17,6 +17,11 @@ class AcJob : Job {
         val targetState = context.jobDetail.jobDataMap.getBoolean("targetState")
 
         val teslaConnectionClient = teslaConnectionFactory.createTeslaConnectionClient(userId)
+
+        if (!targetState && teslaConnectionClient.isUserPresent()) {
+            return
+        }
+
         teslaConnectionClient.changeAcState(targetState)
     }
 }

@@ -13,5 +13,6 @@ interface TeslaConnectionClient {
     fun getStatus(): String
     fun getAcStatus(): Boolean
     fun changeAcState(state: Boolean): Boolean
+    fun isUserPresent(): Boolean
     fun testConnection(vin: String, token: String): Boolean
 }

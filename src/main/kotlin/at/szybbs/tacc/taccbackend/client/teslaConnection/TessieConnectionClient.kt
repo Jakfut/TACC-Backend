@@ -141,6 +141,23 @@ class TessieConnectionClient(
         return result.statusCode.is2xxSuccessful
     }
 
+    override fun isUserPresent(): Boolean {
+        val result = restClient.get()
+            .uri("/{vin}/state", vin)
+            .header("Authorization", "Bearer: $token")
+            .retrieve()
+            .toEntity(Map::class.java)
+
+        if (!result.statusCode.is2xxSuccessful) {
+            logger.warn("Failed to get is_user_present of car with vin: $vin, Body: ${result.body}")
+        }
+
+        // Safely extract the "ac state" value from the Map
+        val vehicleState = result.body?.get("vehicle_state") as? Map<*, *>
+        val isUserPresent = vehicleState?.get("is_user_present") as? Boolean ?: false
+        return isUserPresent
+    }
+
     override fun testConnection(vin: String, token: String): Boolean {
         val result = restClient.get()
             .uri("/{vin}/status", vin)
