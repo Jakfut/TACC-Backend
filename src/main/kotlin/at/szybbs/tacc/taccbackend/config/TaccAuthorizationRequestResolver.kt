@@ -13,10 +13,14 @@ class TaccAuthorizationRequestResolver(
 ) : OAuth2AuthorizationRequestResolver {
 
     private val defaultResolver = DefaultOAuth2AuthorizationRequestResolver(clientRegistrationRepository, "/oauth2/authorization")
-
     private val logger = LoggerFactory.getLogger(TaccAuthorizationRequestResolver::class.java)
+    private val authorizationRequestBasePath = "/oauth2/authorization"
 
     override fun resolve(request: HttpServletRequest): OAuth2AuthorizationRequest? {
+        if (!request.servletPath.startsWith(authorizationRequestBasePath)) {
+            return null
+        }
+
         val defaultAuthorizationRequest = defaultResolver.resolve(request)
         if (defaultAuthorizationRequest != null) {
             val sessionId = request.getParameter("session_id")

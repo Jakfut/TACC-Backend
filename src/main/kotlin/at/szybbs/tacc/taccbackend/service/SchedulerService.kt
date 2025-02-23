@@ -48,7 +48,7 @@ class SchedulerService(
         val user = userInformationService.getUserInformation(userId)
 
         if (user.ccRuntimeMinutes == 0) { // User has no runtime set
-            scheduleAc(userId, true, eventTime, tarLocation, instant)
+            scheduleAc(userId, true, eventTime, tarLocation, instant, true)
             return
         }
 
