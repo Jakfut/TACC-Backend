@@ -2,7 +2,6 @@ package at.szybbs.tacc.taccbackend.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -27,7 +26,8 @@ class WebSecurityConfig {
                 disable()
             }
             authorizeHttpRequests {
-                authorize(anyRequest, authenticated)
+                authorize("/oauth2/authorization/**", authenticated)
+                authorize(anyRequest, permitAll)
             }
             oauth2Login {
                 loginProcessingUrl = "/authorized/*"

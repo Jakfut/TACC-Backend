@@ -1,5 +1,6 @@
 package at.szybbs.tacc.taccbackend.service.teslaConnections
 
+import at.szybbs.tacc.taccbackend.client.teslaConnection.MockTeslaConnectionClient
 import at.szybbs.tacc.taccbackend.client.teslaConnection.TessieConnectionClient
 import at.szybbs.tacc.taccbackend.dto.teslaConnections.tessie.TessieConnectionCreationDto
 import at.szybbs.tacc.taccbackend.dto.teslaConnections.tessie.TessieConnectionUpdateDto
@@ -14,6 +15,7 @@ import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaConnectionVali
 import at.szybbs.tacc.taccbackend.exception.teslaConnections.TeslaNotReachableException
 import at.szybbs.tacc.taccbackend.repository.teslaConnections.TessieConnectionRepository
 import at.szybbs.tacc.taccbackend.service.UserInformationService
+import org.slf4j.LoggerFactory
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import java.util.*
@@ -24,6 +26,7 @@ class TessieConnectionService(
     private val userInformationService: UserInformationService,
     @Lazy private val tessieConnectionClient: TessieConnectionClient,
 ) {
+    private val logger = LoggerFactory.getLogger(MockTeslaConnectionClient::class.java)
 
     @Throws(TeslaConnectionNotFoundException::class)
     fun getTeslaConnection(userInformationId: UUID): TessieConnection {
@@ -40,6 +43,8 @@ class TessieConnectionService(
         userInformationId: UUID,
         creationDto: TessieConnectionCreationDto
     ): TessieConnection {
+        logger.info("Creating new Tessie connection with VIN ${creationDto.vin} and access token ${creationDto.accessToken}")
+
         if (!userInformationService.userInformationExists(userInformationId)) throw UserInformationNotFoundException(
             userInformationId
         )

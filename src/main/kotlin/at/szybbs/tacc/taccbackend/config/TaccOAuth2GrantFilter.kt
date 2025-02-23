@@ -134,7 +134,7 @@ class TaccOAuth2GrantFilter(
 
             googleCalendarConnectionService.setGoogleCalendarEmail(userId, email)
 
-            return response.sendRedirect("/authorized/google")
+            return response.sendRedirect("/oauth2-success.html")
         }
 
         filterChain.doFilter(request, response)
