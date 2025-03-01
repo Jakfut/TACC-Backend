@@ -14,7 +14,6 @@ class TeslaConnectionFactory(
     private val connectionClients: List<TeslaConnectionClient>,
     private var userInformationService: UserInformationService
 ) {
-
     private val clientCache = mutableMapOf<TeslaConnectionType, TeslaConnectionClient>()
 
     @PostConstruct

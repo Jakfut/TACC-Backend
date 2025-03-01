@@ -47,21 +47,7 @@ class SchedulerService(
     fun scheduleAcWithRuntime(userId: UUID, eventTime: Instant, tarLocation: String, instant: Instant) {
         val user = userInformationService.getUserInformation(userId)
 
-        if (user.ccRuntimeMinutes == 0) { // User has no runtime set
-            scheduleAc(userId, true, eventTime, tarLocation, instant, true)
-            scheduleAc(userId, false, eventTime, tarLocation, instant.plusSeconds(5 * 60))
-            return
-        }
-
-        for (i in 0 until user.ccRuntimeMinutes / 5){
-            if (i == 0) {
-                // The first job should be relevant to the ScheduleEntries
-                scheduleAc(userId, true, eventTime, tarLocation, instant.plusSeconds(i.toLong() * 5 * 60), true)
-                continue
-            }
-
-            scheduleAc(userId, true, eventTime, tarLocation, instant.plusSeconds(i.toLong() * 5 * 60))
-        }
+        scheduleAc(userId, true, eventTime, tarLocation, instant, true)
 
         scheduleAc(userId, false, eventTime, tarLocation, instant.plusSeconds(user.ccRuntimeMinutes.toLong() * 60))
     }

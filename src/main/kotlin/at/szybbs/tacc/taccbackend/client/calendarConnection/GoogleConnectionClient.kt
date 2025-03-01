@@ -3,7 +3,7 @@ package at.szybbs.tacc.taccbackend.client.calendarConnection
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarEvent
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.CalendarType
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarListResponse
-import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarEventsResponse
+import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarEventsDTO
 import at.szybbs.tacc.taccbackend.entity.calendarConnections.mapGoogleToCalendarEvent
 import at.szybbs.tacc.taccbackend.service.calendarConnections.GoogleCalendarConnectionService
 import org.slf4j.Logger
@@ -76,7 +76,7 @@ class GoogleConnectionClient(
             .attributes(principal(oauth2ConnectionId))
             .exchange{ _, response ->
                 if (response.statusCode.is2xxSuccessful) {
-                    response.bodyTo(GoogleCalendarEventsResponse::class.java)
+                    response.bodyTo(GoogleCalendarEventsDTO::class.java)
                 } else {
                     logger.warn("Failed to retrieve events for calendar $calendarId for user $userId: Status code: ${response.statusCode}, Body: ${response.body}")
                     null
@@ -89,12 +89,12 @@ class GoogleConnectionClient(
     override fun getEventWithKeyword(calendarId: String, timeMin: Instant, keyword: String): List<CalendarEvent> {
         logger.info("Getting events with keyword $keyword for calendar $calendarId, user $userId, timeMin: $timeMin")
         val result = restClient.get()
-            .uri("/calendars/$calendarId/events?q=$keyword&singleEvents=true&timeMin=${timeMin}&timeMax=${timeMin.plusSeconds(14 * 24 * 60 * 60)}")
+            .uri("/calendars/$calendarId/events?q=$keyword&singleEvents=true&timeMin=${timeMin}&timeMax=${timeMin.plusSeconds(7 * 24 * 60 * 60)}")
             .attributes(clientRegistrationId("google"))
             .attributes(principal(oauth2ConnectionId))
             .exchange{ _, response ->
                 if (response.statusCode.is2xxSuccessful) {
-                    response.bodyTo(GoogleCalendarEventsResponse::class.java)
+                    response.bodyTo(GoogleCalendarEventsDTO::class.java)
                 } else {
                     logger.warn("Failed to retrieve events for calendar $calendarId for user $userId: Status code: ${response.statusCode}, Body: ${response.body}")
                     null

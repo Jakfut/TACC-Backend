@@ -1,4 +1,4 @@
-package at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar
+package at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar
 
 import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.Instant
@@ -16,6 +16,6 @@ data class GoogleCalendarEventItem(
     val end: GoogleEventDateTime
 )
 
-data class GoogleCalendarEventsResponse(
+data class GoogleCalendarEventsDTO(
     val items: List<GoogleCalendarEventItem>
 )

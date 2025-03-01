@@ -1,6 +1,6 @@
 package at.szybbs.tacc.taccbackend.entity.calendarConnections
 
-import at.szybbs.tacc.taccbackend.entity.calendarConnections.googleCalendar.GoogleCalendarEventItem
+import at.szybbs.tacc.taccbackend.dto.calendarConnections.googleCalendar.GoogleCalendarEventItem
 import java.time.Instant
 
 data class CalendarEvent(

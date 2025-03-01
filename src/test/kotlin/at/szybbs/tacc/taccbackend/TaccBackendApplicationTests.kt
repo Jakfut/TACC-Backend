@@ -14,6 +14,8 @@ import at.szybbs.tacc.taccbackend.service.teslaConnections.TessieConnectionServi
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.modulith.core.ApplicationModules
+import org.springframework.modulith.docs.Documenter
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager
 import org.springframework.security.oauth2.client.JdbcOAuth2AuthorizedClientService
@@ -24,7 +26,8 @@ import org.springframework.security.oauth2.client.registration.InMemoryClientReg
 import org.springframework.security.oauth2.core.OAuth2AccessToken
 import org.springframework.security.oauth2.core.OAuth2RefreshToken
 import java.time.Instant
-import java.util.UUID
+import java.util.*
+
 
 @SpringBootTest
 class TaccBackendApplicationTests {
@@ -147,5 +150,15 @@ class TaccBackendApplicationTests {
 		if (authorizedClient != null) {
 			println(authorizedClient.accessToken.expiresAt)
 		}
+	}
+
+	@Test
+	fun generateC4Diagram() {
+		val modules: ApplicationModules =
+			ApplicationModules.of(TaccBackendApplication::class.java)
+
+		Documenter(modules)
+			.writeModulesAsPlantUml()
+			.writeIndividualModulesAsPlantUml()
 	}
 }
