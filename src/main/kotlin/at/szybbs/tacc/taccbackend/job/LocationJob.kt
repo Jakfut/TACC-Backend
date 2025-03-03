@@ -31,11 +31,8 @@ class LocationJob : Job {
         val tarLocation = context.jobDetail.jobDataMap.getString("tarLocation") ?: return
 
         val driveTime = taccDirections.getDriveTimeFromCurrentLocationWithVariables(tarLocation, userId)
-
         val multiplier = if (timeUnit == "seconds") 1 else 60
         val timeDifference = (eventTime.toEpochMilli() - Instant.now().toEpochMilli() - driveTime * 1000 * multiplier) / (1000 * multiplier)
-
-        println(timeDifference)
 
         when (timeDifference) {
             in Int.MIN_VALUE..0 -> {

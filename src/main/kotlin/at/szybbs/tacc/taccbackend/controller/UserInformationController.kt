@@ -1,11 +1,15 @@
 package at.szybbs.tacc.taccbackend.controller
 
+import at.szybbs.tacc.taccbackend.client.TaccDirections
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationCreationDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationResponseDto
 import at.szybbs.tacc.taccbackend.dto.userInformation.UserInformationUpdateDefaultValuesDto
 import at.szybbs.tacc.taccbackend.entity.ScheduleEntry
+import at.szybbs.tacc.taccbackend.factory.CalendarConnectionFactory
+import at.szybbs.tacc.taccbackend.job.RefreshSchedules
 import at.szybbs.tacc.taccbackend.service.SchedulerService
 import at.szybbs.tacc.taccbackend.service.UserInformationService
+import org.quartz.JobKey
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -22,7 +26,9 @@ import java.util.*
 @RequestMapping("/api/user/{user-information-id}")
 class UserInformationController(
     private val userInformationService: UserInformationService,
-    private val schedulerService: SchedulerService
+    private val schedulerService: SchedulerService,
+    private val calendarConnectionFactory: CalendarConnectionFactory,
+    private val taccDirections: TaccDirections
 ) {
 
     @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
@@ -102,5 +108,27 @@ class UserInformationController(
         val scheduledEntries = schedulerService.getScheduleEntries(userInformationId)
 
         return ResponseEntity.ok(scheduledEntries)
+    }
+
+    @GetMapping("refresh-schedules")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
+    fun refreshSchedulesEndpoint(
+        @PathVariable("user-information-id") userInformationId: UUID
+    ) : ResponseEntity<String> {
+        RefreshSchedules(calendarConnectionFactory, schedulerService, userInformationService, taccDirections)
+            .refreshUserSchedules(userInformationService.getUserInformation(userInformationId))
+
+        return ResponseEntity.ok("Schedules refreshed")
+    }
+
+    @GetMapping("/{job-key}/unschedule-job")
+    @PreAuthorize("@userSecurity.idEqualsAuthenticationId(#userInformationId)")
+    fun unscheduleJob(
+        @PathVariable("user-information-id") userInformationId: UUID,
+        @PathVariable("user-information-id") jobKey: String
+    ) : ResponseEntity<String> {
+        schedulerService.unscheduleJob(JobKey(jobKey))
+
+        return ResponseEntity.ok("Job unscheduled")
     }
 }

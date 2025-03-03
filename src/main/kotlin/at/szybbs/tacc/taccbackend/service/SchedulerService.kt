@@ -103,6 +103,7 @@ class SchedulerService(
             }
 
             ScheduleEntry(
+                it.name,
                 trigger.nextFireTime.toInstant(),
                 (jobDetail.jobDataMap.get("eventTime") as? Long)?.let { Instant.ofEpochMilli(it) } ?: Instant.now(),
                 jobDetail.jobDataMap.getString("tarLocation") ?: "",
