@@ -9,9 +9,6 @@ COPY src ./src
 
 RUN mvn package -DskipTests
 
-EXPOSE 8080
-
-#for debugging
-#CMD ["tail", "-f", "/dev/null"]
+EXPOSE 8088
 
 CMD java -jar target/*.jar
